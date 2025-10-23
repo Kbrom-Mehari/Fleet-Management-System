@@ -3,6 +3,8 @@ package org.securityapps.vehicleregistry.domain.vehicle;
 import lombok.Getter;
 import org.securityapps.vehicleregistry.domain.driver.DriverId;
 import org.securityapps.vehicleregistry.domain.vehicle.event.DriverAssignedEvent;
+import org.securityapps.vehicleregistry.domain.vehicle.event.VehicleRegisteredEvent;
+import org.securityapps.vehicleregistry.domain.vehicleowner.VehicleOwnerId;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -14,6 +16,7 @@ import java.util.Objects;
 public class Vehicle {
     private final VehicleId id;
     public DriverId assignedDriverId;
+    public VehicleOwnerId vehicleOwnerId;
     private final String modelName;
     private final String plateNumber;
     private final String vin; //vehicle identification number (libre number)
@@ -28,9 +31,14 @@ public class Vehicle {
         return new Vehicle(id, modelName, plateNumber, vin);
     }
     private final List<Object> domainEvents = new ArrayList<>();
+
     public void assignDriver(DriverId driverId) {
         domainEvents.add(new DriverAssignedEvent(driverId,id, Instant.now()));
     }
+    public void registerVehicle(VehicleOwnerId ownerId, VehicleId vehicleId) {
+        domainEvents.add(new VehicleRegisteredEvent(vehicleId, ownerId, Instant.now()));
+    }
+
     public List<Object> getDomainEvents() {
         return Collections.unmodifiableList(domainEvents);
     }

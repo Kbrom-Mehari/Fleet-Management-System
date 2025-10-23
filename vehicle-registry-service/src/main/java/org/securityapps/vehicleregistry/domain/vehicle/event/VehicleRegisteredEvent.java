@@ -1,4 +1,10 @@
 package org.securityapps.vehicleregistry.domain.vehicle.event;
 
-public class VehicleRegisteredEvent {
+import org.securityapps.vehicleregistry.domain.vehicle.VehicleId;
+import org.securityapps.vehicleregistry.domain.vehicleowner.VehicleOwnerId;
+
+import java.time.Instant;
+
+public record VehicleRegisteredEvent(VehicleId vehicleId, VehicleOwnerId ownerId,Instant registeredAt) {
+
 }

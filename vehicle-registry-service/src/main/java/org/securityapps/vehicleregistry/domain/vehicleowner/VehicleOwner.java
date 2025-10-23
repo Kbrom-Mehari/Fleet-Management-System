@@ -10,24 +10,22 @@ public class VehicleOwner {
     private final VehicleOwnerId id;
     private String firstName;
     private String lastName;
-    private String phoneNumber;
     private final AddressId addressId;
 
-    private VehicleOwner(VehicleOwnerId id, String firstName,String lastName,String phoneNumber,AddressId addressId) {
+    private VehicleOwner(VehicleOwnerId id, String firstName,String lastName,AddressId addressId) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.phoneNumber = phoneNumber;
         this.addressId = addressId;
+    }
+    public static VehicleOwner create(VehicleOwnerId id, String firstName, String lastName, AddressId addressId) {
+        return new VehicleOwner(id, firstName, lastName, addressId);
     }
     public void changeFirstName(String firstName) {
         this.firstName = firstName;
     }
     public void changeLastName(String lastName) {
         this.lastName = lastName;
-    }
-    public void changePhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
     }
 
     @Override

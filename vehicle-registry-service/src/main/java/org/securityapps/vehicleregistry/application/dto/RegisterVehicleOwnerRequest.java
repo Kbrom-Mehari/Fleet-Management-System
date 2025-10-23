@@ -1,4 +1,5 @@
 package org.securityapps.vehicleregistry.application.dto;
 
-public class RegisterVehicleOwnerRequest {
-}
+public record RegisterVehicleOwnerRequest(
+        String firstName,
+        String lastName) { }
