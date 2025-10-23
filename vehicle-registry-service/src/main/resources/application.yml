@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: vehicle-registry-service
+  datasource:
+    url:
+    username:
+    password:
+    driver-class-name:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+
+server:
+  port: 8080
+
