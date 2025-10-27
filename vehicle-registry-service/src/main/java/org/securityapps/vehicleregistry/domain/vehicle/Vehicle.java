@@ -27,7 +27,7 @@ public class Vehicle {
         this.plateNumber = plateNumber;
         this.vin = vin;
     }
-    public static Vehicle create(VehicleId id, String modelName, String plateNumber, String vin) {
+    public static Vehicle register(VehicleId id, String modelName, String plateNumber, String vin) {
         return new Vehicle(id, modelName, plateNumber, vin);
     }
     private final List<Object> domainEvents = new ArrayList<>();
