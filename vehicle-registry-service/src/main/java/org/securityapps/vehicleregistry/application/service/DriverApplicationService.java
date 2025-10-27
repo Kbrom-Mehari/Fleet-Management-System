@@ -17,11 +17,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class DriverApplicationService implements UpdateAddressUseCase, RegisterDriverUseCase {
-//    private final DriverRepository driverRepository;
-//    public DriverApplicationService(DriverRepository driverRepository) {
-//        this.driverRepository = driverRepository;
-//    }
+    private final DriverRepository driverRepository;
+
     @Override
     public void updateAddress(UpdateAddressRequest request){
 
@@ -30,7 +29,7 @@ public class DriverApplicationService implements UpdateAddressUseCase, RegisterD
     public RegisterDriverResponse registerDriver(RegisterDriverRequest request, AddressDTO addressDTO) {
         Address address = Address.create(AddressId.newId(),addressDTO.kebeleIdNumber(), addressDTO.faydaNumber(), addressDTO.region(), addressDTO.city(), addressDTO.woreda(), addressDTO.kebele(), addressDTO.phoneNumber());
         Driver driver= Driver.register(DriverId.newId(), request.firstName(), request.lastName(), request.licenseNumber(), address.getId());
-
+        driverRepository.save(driver);
         return new RegisterDriverResponse(driver.getId(), driver.getFirstName(), driver.getLastName(), driver.getLicenseNumber(), driver.getAddressId());
     }
 }
