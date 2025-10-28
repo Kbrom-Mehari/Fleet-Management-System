@@ -36,7 +36,7 @@ public class Vehicle {
         return vehicle;
     }
 
-    public void registerEvent(){
+    private void registerEvent(){
         domainEvents.add(new VehicleRegisteredEvent(vehicleId,Instant.now()));
     }
 
