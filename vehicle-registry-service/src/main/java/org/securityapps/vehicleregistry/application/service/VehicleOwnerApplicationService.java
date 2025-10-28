@@ -16,14 +16,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
-public class VehicleOwnerApplicationService implements RegisterVehicleOwnerUseCase, UpdateAddressUseCase {
+public class VehicleOwnerApplicationService implements RegisterVehicleOwnerUseCase {
     @Override
     public RegisterVehicleOwnerResponse registerVehicleOwner(RegisterVehicleOwnerRequest request, AddressDTO addressDTO){
         Address address=Address.create(AddressId.newId(), addressDTO.kebeleIdNumber(), addressDTO.faydaNumber(), addressDTO.region(), addressDTO.city(), addressDTO.woreda(), addressDTO.kebele(), addressDTO.phoneNumber());
         VehicleOwner owner=VehicleOwner.create(VehicleOwnerId.newId(), request.firstName(), request.lastName(), address.getId());
         return new RegisterVehicleOwnerResponse(owner.getId(), owner.getFirstName(), owner.getLastName(), owner.getAddressId());
     }
-    @Override
     public void updateAddress(UpdateAddressRequest request){
 
     }
