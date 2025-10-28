@@ -18,11 +18,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class DriverApplicationService implements UpdateAddressUseCase, RegisterDriverUseCase {
+public class DriverApplicationService implements RegisterDriverUseCase {
     private final DriverRepository driverRepository;
 
-    @Override
-    public void updateAddress(UpdateAddressRequest request){
+    public void updateAddress(UpdateAddressRequest request) {
 
     }
     @Override
