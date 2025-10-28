@@ -5,6 +5,6 @@ import org.securityapps.vehicleregistry.domain.vehicleowner.VehicleOwnerId;
 
 import java.time.Instant;
 
-public record VehicleRegisteredEvent(VehicleId vehicleId, VehicleOwnerId ownerId,Instant registeredAt) {
+public record VehicleRegisteredEvent(VehicleId vehicleId, Instant registeredAt) {
 
 }
