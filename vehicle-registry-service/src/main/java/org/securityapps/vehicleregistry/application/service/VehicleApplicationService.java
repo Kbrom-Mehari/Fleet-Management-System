@@ -41,7 +41,11 @@ public class VehicleApplicationService implements
         return new DriverAssignedResponse(Instant.now(),vehicleId,driverId,vehicle.getVehicleOwnerId());
     }
     @Override
-    public VehicleTransferredResponse transferVehicleOwnership(VehicleId vehicleId, VehicleOwnerId oldOwner, VehicleOwnerId newOwner) {
-        return null;
+    public VehicleTransferredResponse transferVehicleOwnership(VehicleId vehicleId, VehicleOwnerId newOwnerId) {
+        Vehicle vehicle=vehicleRepository.findById(vehicleId).orElseThrow(()->new RuntimeException("vehicle not found"));
+        vehicle.changeVehicleOwner(newOwnerId);
+        VehicleOwnerId oldOwnerId=vehicle.getVehicleOwnerId();
+        vehicleRepository.save(vehicle);
+        return new VehicleTransferredResponse(vehicleId,oldOwnerId,newOwnerId,Instant.now());
     }
 }
