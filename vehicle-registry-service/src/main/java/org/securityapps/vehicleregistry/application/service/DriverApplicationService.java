@@ -20,8 +20,12 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class DriverApplicationService implements RegisterDriverUseCase {
     private final DriverRepository driverRepository;
+    private final UpdateAddressService  updateAddressService;
 
-    public void updateAddress(UpdateAddressRequest request) {
+    public void updateAddress(DriverId driverId, UpdateAddressRequest updateAddressRequest) {
+        Driver driver=driverRepository.findById(driverId).orElseThrow(()->new RuntimeException("Driver not found"));
+        updateAddressService.updateAddress(updateAddressRequest,driver.getAddressId());
+        driverRepository.save(driver);
 
     }
     @Override
