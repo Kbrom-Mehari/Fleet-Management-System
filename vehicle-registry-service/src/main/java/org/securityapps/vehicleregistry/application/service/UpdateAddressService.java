@@ -15,6 +15,10 @@ public class UpdateAddressService implements UpdateAddressUseCase {
     @Override
     public void updateAddress(UpdateAddressRequest request, AddressId addressId){
         Address address =addressRepository.findById(addressId).orElseThrow(()->new RuntimeException("address not found"));
-
+        address.changeRegion(request.region());
+        address.changeCity(request.city());
+        address.changeWoreda(request.woreda());
+        address.changeKebele(request.kebele());
+        address.changePhoneNumber(address.getPhoneNumber());
     }
 }
