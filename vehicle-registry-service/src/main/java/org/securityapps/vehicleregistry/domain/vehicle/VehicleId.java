@@ -11,7 +11,7 @@ public record VehicleId(String id) {
     public static VehicleId newId() {
         return new VehicleId(UUID.randomUUID().toString());
     }
-    public static VehicleId of(String id){
+    public static VehicleId from(String id){
         return new VehicleId(id);
     }
 }
