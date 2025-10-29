@@ -5,5 +5,5 @@ import org.securityapps.vehicleregistry.domain.vehicle.VehicleId;
 import org.securityapps.vehicleregistry.domain.vehicleowner.VehicleOwnerId;
 
 public interface TransferVehicleOwnershipUseCase {
-    VehicleTransferredResponse transferVehicleOwnership(VehicleId vehicleId, VehicleOwnerId oldOwner, VehicleOwnerId newOwner);
+    VehicleTransferredResponse transferVehicleOwnership(VehicleId vehicleId, VehicleOwnerId newOwner);
 }
