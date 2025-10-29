@@ -3,7 +3,6 @@ package org.securityapps.vehicleregistry.domain.vehicle;
 import lombok.Getter;
 import org.securityapps.vehicleregistry.domain.driver.DriverId;
 import org.securityapps.vehicleregistry.domain.vehicle.event.DriverAssignedEvent;
-import org.securityapps.vehicleregistry.domain.vehicle.event.DriverReassignedEvent;
 import org.securityapps.vehicleregistry.domain.vehicle.event.VehicleRegisteredEvent;
 import org.securityapps.vehicleregistry.domain.vehicleowner.VehicleOwnerId;
 
@@ -49,10 +48,6 @@ public class Vehicle {
     }
     public void unAssignDriver(){
         this.assignedDriverId=null;
-    }
-    public void reAssignDriver(DriverId newDriverId){
-        this.assignedDriverId=newDriverId;
-        domainEvents.add(new DriverReassignedEvent(vehicleId,assignedDriverId,newDriverId,Instant.now()));
     }
     public void changeVehicleOwner(VehicleOwnerId newOwnerId){
         this.vehicleOwnerId=newOwnerId;
