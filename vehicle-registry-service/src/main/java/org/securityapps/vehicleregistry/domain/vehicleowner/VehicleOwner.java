@@ -18,7 +18,7 @@ public class VehicleOwner {
         this.lastName = lastName;
         this.addressId = addressId;
     }
-    public static VehicleOwner create(VehicleOwnerId id, String firstName, String lastName, AddressId addressId) {
+    public static VehicleOwner register(VehicleOwnerId id, String firstName, String lastName, AddressId addressId) {
         return new VehicleOwner(id, firstName, lastName, addressId);
     }
     public void changeFirstName(String firstName) {
