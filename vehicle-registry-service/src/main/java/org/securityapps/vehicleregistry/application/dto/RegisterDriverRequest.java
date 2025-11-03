@@ -1,8 +1,9 @@
 package org.securityapps.vehicleregistry.application.dto;
 
-import org.securityapps.vehicleregistry.domain.address.AddressId;
+import org.securityapps.vehicleregistry.common.valueObject.Address;
 
 public record RegisterDriverRequest(
         String firstName,
         String lastName,
-        String licenseNumber ) { }
+        String licenseNumber,
+        Address address) { }
