@@ -1,46 +1,67 @@
 package org.securityapps.vehicleregistry.common.valueObject;
 
+import jakarta.persistence.Embeddable;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import java.util.Objects;
 
+@Getter
+@Embeddable
+@NoArgsConstructor
 public class Address {
 
-    private final String kebeleIdNumber;
-    private final String faydaNumber;
+    private String kebeleIdNumber;
+    private String faydaNumber;
     private String region;
     private String city;
     private String woreda;
     private String kebele;
     private String phoneNumber;
 
+
+
     public Address(String kebeleIdNumber, String faydaNumber, String region, String city, String woreda, String kebele, String phoneNumber) {
 
-        this.region = Objects.requireNonNull(region, "region cannot be null");
-        this.city = Objects.requireNonNull(city, "city cannot be null");
-        this.woreda = Objects.requireNonNull(woreda, "woreda cannot be null");
-        this.kebele = Objects.requireNonNull(kebele, "kebele cannot be null");
-        this.phoneNumber = Objects.requireNonNull(phoneNumber, "phoneNumber cannot be null");
-        this.faydaNumber = Objects.requireNonNull(faydaNumber, "faydaNumber cannot be null");
-        this.kebeleIdNumber = Objects.requireNonNull(kebeleIdNumber, "kebeleIdNumber cannot be null");
+        this.region = validate(region, "region");
+        this.city = validate(city, "city");
+        this.woreda = validate(woreda, "woreda");
+        this.kebele = validate(kebele, "kebele");
+        this.phoneNumber = validate(phoneNumber, "phoneNumber");
+        this.faydaNumber = validate(faydaNumber, "faydaNumber");
+        this.kebeleIdNumber = validate(kebeleIdNumber, "kebeleIdNumber");
     }
-
-    public String getKebeleIdNumber() {return kebeleIdNumber;}
-    public String getFaydaNumber() {return faydaNumber;}
-    public String getRegion() {return region;}
-    public String getCity() {return city;}
-    public String getWoreda() {return woreda;}
-    public String getKebele() {return kebele;}
-    public String getPhoneNumber() {return phoneNumber;}
 
     //Factory method
     public static Address create(String kebeleIdNumber, String faydaNumber, String region, String city, String woreda, String kebele, String phoneNumber) {
         return new Address(kebeleIdNumber,faydaNumber, region, city, woreda, kebele, phoneNumber);
     }
 
-    public void changeRegion(String newRegion) {this.region = newRegion;}
-    public void changeCity(String newCity) {this.city = newCity;}
-    public void changeWoreda(String newWoreda) {this.woreda = newWoreda;}
-    public void changePhoneNumber(String newPhoneNumber) {this.phoneNumber = newPhoneNumber;}
-    public void changeKebele(String newKebele) {this.kebele = newKebele;}
+    private String validate(String value,String fieldName){
+        if(value==null || value.trim().isEmpty()){
+            throw new IllegalArgumentException(fieldName+" cannot be null or empty");
+        }
+        return value.trim();
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if(this == object) return true;
+        if(!(object instanceof Address address)) return false;
+        return Objects.equals(region, address.region)&&
+                Objects.equals(city,address.city)&&
+                Objects.equals(woreda,address.woreda)&&
+                Objects.equals(kebele,address.kebele)&&
+                Objects.equals(phoneNumber,address.phoneNumber);
+    }
+    @Override
+    public int hashCode(){
+        return Objects.hash(region,city,woreda,kebele,phoneNumber);
+    }
+    @Override
+    public String toString(){
+        return "Region: %s, City: %s, Woreda: %s, Kebele: %s, PhoneNumber: %s".formatted(region,city,woreda,kebele,phoneNumber);
+    }
 
 
 }
