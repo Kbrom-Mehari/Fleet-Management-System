@@ -5,5 +5,5 @@ import org.securityapps.vehicleregistry.application.dto.RegisterVehicleOwnerRequ
 import org.securityapps.vehicleregistry.application.dto.RegisterVehicleOwnerResponse;
 
 public interface RegisterVehicleOwnerUseCase {
-    RegisterVehicleOwnerResponse registerVehicleOwner(RegisterVehicleOwnerRequest registerVehicleOwnerRequest, AddressDTO  addressDTO);
+    RegisterVehicleOwnerResponse registerVehicleOwner(RegisterVehicleOwnerRequest registerVehicleOwnerRequest);
 }
