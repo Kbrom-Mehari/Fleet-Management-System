@@ -1,7 +1,9 @@
 package org.securityapps.vehicletracking.domain.trackerDevice;
 
+import lombok.Getter;
 import java.util.Objects;
 
+@Getter
 public class TrackerDevice {
     private final TrackerDeviceId trackerDeviceId;
     private String serialNumber;
@@ -17,13 +19,16 @@ public class TrackerDevice {
         this.simNumber = simNumber;
     }
 
-    public static TrackerDevice create(TrackerDeviceId trackerDeviceId,String serialNumber, String imei, String simNumber) {
-        return new TrackerDevice(trackerDeviceId,serialNumber,imei,simNumber);
+    public static TrackerDevice create(String serialNumber, String imei, String simNumber) {
+        return new TrackerDevice(TrackerDeviceId.newId(),serialNumber,imei,simNumber);
     }
-    public TrackerDeviceId getTrackerDeviceId() {return trackerDeviceId;}
-    public String getSerialNumber() {return serialNumber;}
-    public String getImei() {return imei;}
-    public String getSimNumber() {return simNumber;}
+    public static TrackerDevice rehydrate(String trackerDeviceId, String serialNumber, String imei,
+                                          String simNumber,boolean isActive,boolean isDamaged) {
+        var device= new TrackerDevice(TrackerDeviceId.from(trackerDeviceId),serialNumber,imei,simNumber);
+        device.isActive=isActive;
+        device.isDamaged=isDamaged;
+        return device;
+    }
 
     @Override
     public boolean equals(Object object) {
