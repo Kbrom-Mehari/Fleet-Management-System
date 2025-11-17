@@ -3,5 +3,5 @@ package org.securityapps.vehicletracking.domain.vehicleTrackingSession.repositor
 import org.securityapps.vehicletracking.domain.vehicleTrackingSession.VehicleTrackingSession;
 
 public interface VehicleTrackingSessionRepository {
-    void save (VehicleTrackingSession vehicleTracking);
+    void save (VehicleTrackingSession vehicleTrackingSession);
 }
