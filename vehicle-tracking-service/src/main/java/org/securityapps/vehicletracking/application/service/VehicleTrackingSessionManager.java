@@ -2,6 +2,7 @@ package org.securityapps.vehicletracking.application.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.securityapps.vehicletracking.application.usecase.ManageVehicleTrackingSessionUseCase;
 import org.securityapps.vehicletracking.domain.trackerDevice.TrackerDeviceId;
 import org.securityapps.vehicletracking.domain.vehicleTrackingSession.VehicleTrackingSession;
 import org.securityapps.vehicletracking.domain.vehicleTrackingSession.repository.VehicleTrackingSessionRepository;
@@ -14,13 +15,14 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class VehicleTrackingSessionManager {
+public class VehicleTrackingSessionManager implements ManageVehicleTrackingSessionUseCase{
     private final Map<String ,VehicleTrackingSession> activeSessions=new ConcurrentHashMap<>();
     private final RedisTrackingSessionCache trackingSessionCache;
     private final VehicleTrackingSessionRepository repository;
 
     private static final String SESSION_KEY_PREFIX="tracking_session:";
-
+    
+    @Override
     public VehicleTrackingSession getOrCreateSession(TrackerDeviceId deviceId) {
         String key=SESSION_KEY_PREFIX+deviceId.toString();
 
@@ -49,6 +51,7 @@ public class VehicleTrackingSessionManager {
         activeSessions.put(key,session);
         trackingSessionCache.cacheActiveSession(session);
     }
+    @Override
     public void endSession(TrackerDeviceId deviceId){
         String key=SESSION_KEY_PREFIX+deviceId.toString();
         VehicleTrackingSession session=activeSessions.remove(key);
