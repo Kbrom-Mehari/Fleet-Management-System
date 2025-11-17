@@ -1,6 +1,10 @@
 package org.securityapps.vehicletracking.domain.vehicleTrackingSession.dto;
 
-public record SessionAnalytics(double distanceCovered,
-                               int speedLimitViolations,
-                               int crashReports) {
+import java.time.Duration;
+
+public record SessionAnalytics(Duration sessionLasted,
+                               double distanceCoveredInKilometers,
+                               double averageSpeed,
+                               double maxSpeed,
+                               int speedLimitViolations) {
 }
