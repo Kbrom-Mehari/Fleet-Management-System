@@ -5,18 +5,16 @@ import org.securityapps.vehicletracking.domain.vehicleTrackingSession.VehicleTra
 import org.securityapps.vehicletracking.domain.vehicleTrackingSession.repository.VehicleTrackingSessionRepository;
 import org.securityapps.vehicletracking.infrastructure.persistence.mapper.VehicleTrackingSessionMapper;
 import org.securityapps.vehicletracking.infrastructure.persistence.repository.JpaVehicleTrackingSessionRepository;
-import org.securityapps.vehicletracking.infrastructure.timescaledb.writer.LocationPointWriter;
 import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
 public class VehicleTrackingSessionRepositoryImpl implements VehicleTrackingSessionRepository {
-    private final JpaVehicleTrackingSessionRepository repository;
+    private final JpaVehicleTrackingSessionRepository sessionRepository;
     private final VehicleTrackingSessionMapper mapper;
-    private final LocationPointWriter writer;
 
     @Override
     public void save(VehicleTrackingSession session){
-
+        sessionRepository.save(mapper.toEntity(session));
     }
 }
