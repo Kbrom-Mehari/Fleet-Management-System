@@ -25,7 +25,7 @@ public class VehicleMovementRecorder implements RecordVehicleMovementUseCase {
 
         try{
             writer.save(locationPoint);
-            session.addLocationPoint(locationPoint);
+            session.addLocationPoint(locationPoint); //add in-memory
             try{
                 redisCache.save(locationPoint);
                 sessionManager.updateSession(session);
