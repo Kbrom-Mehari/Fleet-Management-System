@@ -1,5 +1,6 @@
 package org.securityapps.vehicleregistry.domain.vehicle;
 
+
 import lombok.Getter;
 import org.securityapps.vehicleregistry.domain.driver.DriverId;
 import org.securityapps.vehicleregistry.domain.vehicle.event.DriverAssignedEvent;
@@ -23,14 +24,17 @@ public class Vehicle {
 
     private final List<Object> domainEvents = new ArrayList<>();
 
-    private Vehicle(VehicleId vehicleId, String modelName, String plateNumber, String vin) {
+    private Vehicle(VehicleId vehicleId,DriverId assignedDriverId,VehicleOwnerId vehicleOwnerId, String modelName, String plateNumber, String vin) {
         this.vehicleId= vehicleId;
+        this.assignedDriverId = assignedDriverId;
+        this.vehicleOwnerId = vehicleOwnerId;
         this.modelName = modelName;
         this.plateNumber = plateNumber;
         this.vin = vin;
     }
-    public static Vehicle register(VehicleId id, String modelName, String plateNumber, String vin) {
-        Vehicle vehicle=new Vehicle(id, modelName, plateNumber, vin);
+
+    public static Vehicle create(VehicleId vehicleId,DriverId assignedDriverId,VehicleOwnerId vehicleOwnerId, String modelName, String plateNumber, String vin) {
+        Vehicle vehicle=new Vehicle(vehicleId,assignedDriverId,vehicleOwnerId, modelName, plateNumber, vin);
         vehicle.registerEvent();
         return vehicle;
     }
@@ -69,5 +73,4 @@ public class Vehicle {
     public int hashCode(){
         return Objects.hash(vehicleId);
     }
-
 }
