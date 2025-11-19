@@ -25,7 +25,6 @@ public class DriverRepositoryImpl implements DriverRepository {
     @Override
     public Driver save(Driver driver){
         DriverEntity entity= driverMapper.toEntity(driver);
-        System.out.println("Generated Id value: "+entity.getDriverId());
         DriverEntity savedEntity= jpaDriverRepository.save(entity);
         return driverMapper.toDomain(savedEntity);
     }
