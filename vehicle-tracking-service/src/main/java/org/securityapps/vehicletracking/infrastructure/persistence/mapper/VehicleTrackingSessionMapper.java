@@ -1,7 +1,6 @@
 package org.securityapps.vehicletracking.infrastructure.persistence.mapper;
 
 import lombok.RequiredArgsConstructor;
-import org.securityapps.vehicletracking.domain.trackerDevice.TrackerDeviceId;
 import org.securityapps.vehicletracking.domain.vehicleTrackingSession.VehicleTrackingSession;
 import org.securityapps.vehicletracking.infrastructure.persistence.entity.VehicleTrackingSessionEntity;
 import org.springframework.stereotype.Component;
