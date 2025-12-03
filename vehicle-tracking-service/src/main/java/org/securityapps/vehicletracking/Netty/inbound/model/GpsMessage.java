@@ -1,12 +1,18 @@
 package org.securityapps.vehicletracking.Netty.inbound.model;
 
 import java.time.Instant;
+import java.util.Map;
 
 public record GpsMessage(
-    String deviceId,
     double latitude,
     double longitude,
-    double speedKph,
-    double altitude,
+    int speedKph,
+    short altitude,
+    int angle,
+    int satellites,
+    int priority,
+    int eventId,
+    int totalIO,
+    Map<Integer,Object> ioElements,
     Instant timestamp
 ) { }
