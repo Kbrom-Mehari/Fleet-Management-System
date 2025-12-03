@@ -58,7 +58,7 @@ public class GpsFrameDecoder extends ByteToMessageDecoder {
             return null;   //wait for more bytes
         }
 
-        in.skipBytes(4);
+        in.skipBytes(4); // skip the length byte
         return in.readRetainedSlice(length); //extract the exact frame after the length byte and return it
     }
     private boolean isGt06Frame(ByteBuf in){   // concox Gt06 GPS devices
@@ -68,21 +68,29 @@ public class GpsFrameDecoder extends ByteToMessageDecoder {
         return (a == 0x78 && b == 0x78) || (a == 0x79 && b == 0x79);
     }
     private ByteBuf decodeGt06Frame(ByteBuf in){
-        if(in.readableBytes() < 5) return null;
-        int start1 = in.getUnsignedByte(in.readerIndex());
-        int start2 = in.getUnsignedByte(in.readerIndex()+1);
+        if(in.readableBytes() < 8) return null; // 2 start bit + 1 length + 1 protocol ... + 2 crc + 2 end bytes
 
-        int length = in.getUnsignedShort(in.readerIndex()+2);
+        int start1 = in.readUnsignedByte();
+        int start2 = in.readUnsignedByte();
 
-        if(length < 0 || length > MAX_FRAME_LENGTH) {
+        if(!((start1 == 0x78 && start2 == 0x78)|| (start1 == 0x79 && start2 == 0x79))){
+            // if not Gt06, skip
+            return null;
+        }
+        int length = in.getUnsignedByte(in.readerIndex()+2);
+        if(length <= 0 || length > MAX_FRAME_LENGTH){
             in.skipBytes(in.readableBytes());
             return null;
         }
-        int frameLength = length + 5;
-        if(in.readableBytes() < frameLength) {
-            return null; // incomplete - we have to wait
-        }
-        return in.readRetainedSlice(frameLength);
+        /*Gt06 full frame length is - start(2 bytes) + packet length(1 byte) +
+        payload[from protocol number up to crc/errorCheck](length bytes) +
+        stop(2 bytes) */
+        int frameLength = length + 5; // length + 2 + 1 + 2 -> start, length, stop respectively
 
+        if(in.readableBytes() < frameLength){
+            return null; // if it is incomplete frame, we wait until full frame arrives
+        }
+
+        return in.readRetainedSlice(frameLength); // return the full frame
     }
 }
