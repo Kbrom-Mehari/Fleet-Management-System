@@ -89,7 +89,7 @@ public class Gt06ProtocolDecoder extends SimpleChannelInboundHandler<ByteBuf> {
     }
 
     private long decodeDateTime(ByteBuf buf){
-        // Gt06 devices send timestamp in YYMMDDhhmmss
+        // Gt06 devices send timestamp in YYMMDDhhmmss format
         int year = buf.readUnsignedByte() + 2000;
         int month = buf.readUnsignedByte();
         int day = buf.readUnsignedByte();
