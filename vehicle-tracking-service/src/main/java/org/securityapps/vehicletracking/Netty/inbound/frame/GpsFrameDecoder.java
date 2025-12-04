@@ -7,7 +7,13 @@ import io.netty.handler.codec.ByteToMessageDecoder;
 import java.util.List;
 
 public class GpsFrameDecoder extends ByteToMessageDecoder {
-    private static final int MAX_FRAME_LENGTH = 2048; // PROTECTS OUR SERVER FROM HUGE PACKET ATTACKS
+
+    private static final int MAX_FRAME_LENGTH = 1024 * 3;//MAX 3 KB - PROTECTS OUR SERVER FROM HUGE PACKET ATTACKS
+    private static final int TLT_HEADER_ZEROS = 4;// Teltonica packet starts with four zeros
+    private static final int TLT_CRC_BYTES = 2;//CRC - error check
+    private static final int TLT_LENGTH_BYTES = 4;
+
+
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in , List<Object> out) throws Exception{
         // If there is no readable bytes, return
@@ -42,30 +48,39 @@ public class GpsFrameDecoder extends ByteToMessageDecoder {
 
     private boolean isTeltonicaFrame(ByteBuf in){
         // Teltonica starts with 0x00 0x00 0x00 0x00 prefix
-        if(in.readableBytes() < 4) return false; // the first 4 bytes are needed to read payload length field
-        int a = in.getUnsignedByte(in.readerIndex());
-        int b = in.getUnsignedByte(in.readerIndex()+1);
-        return (a == 0 && b ==0);  // teltonica AVL data starts with two zeros
+        if(in.readableBytes() < TLT_HEADER_ZEROS) return false; // the first 4 bytes(prefix) are needed
+        int reader = in.readerIndex();
+        for(int i = 0; i < TLT_HEADER_ZEROS; i++){
+            if(in.getUnsignedByte(reader + i) != 0) return false;//the first 4 bytes should be 0x00
+        }
+        return true;
     }
     private ByteBuf decodeTeltonicaFrame(ByteBuf in){
-        if(in.readableBytes() < 8) return null; // not enough data
+        if(in.readableBytes() < TLT_HEADER_ZEROS + TLT_LENGTH_BYTES) return null; //at least both are needed
 
         int reader = in.readerIndex();
-        int startBytes = in.getUnsignedShort(reader); //0x00 0x00
-        int avlLength = in.getInt(reader + 2); // length is found after the two bytes
+
+        for(int i = 0; i < TLT_HEADER_ZEROS; i++){
+            if(in.getUnsignedByte(reader + i) != 0) return null; //not teltonica frame if the first 4 are not zero
+        }
+
+        int avlLength = in.getInt(reader + TLT_HEADER_ZEROS); // length is found after the 4 bytes (zeros)
 
         if(avlLength <= 0 || avlLength > MAX_FRAME_LENGTH) {
-            in.skipBytes(in.readableBytes()); // corrupted data
+            in.skipBytes(in.readableBytes()); // corrupted data. consume everything to avoid infinite loop and even connection closing
             return null;
         }
-        int fullFrameLength = 2 + 4 + avlLength;
 
-        if(in.readableBytes() < fullFrameLength) {
+        int totalPacketBytes = TLT_HEADER_ZEROS + TLT_LENGTH_BYTES + avlLength + TLT_CRC_BYTES;
+
+        if(in.readableBytes() < totalPacketBytes) {
             return null;   //wait for more bytes
         }
+        int avlDataStart = reader + TLT_HEADER_ZEROS + TLT_LENGTH_BYTES;
+        ByteBuf avlSlice = in.retainedSlice(avlDataStart,avlLength); //return the avl data array only
+        in.skipBytes(totalPacketBytes); //advance the original buffer by totalPacketBytes
 
-        in.skipBytes(4); // skip the length byte
-        return in.readRetainedSlice(fullFrameLength); //extract the exact frame after the length byte and return it
+        return avlSlice;
     }
     private boolean isGt06Frame(ByteBuf in){   // concox Gt06 GPS devices
         // Gt06 uses 0x78 0x78 or 0x79 0x79 start bytes
