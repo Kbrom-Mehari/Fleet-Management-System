@@ -34,9 +34,9 @@ public class GpsFrameDecoder extends ByteToMessageDecoder {
             }
             return;
         }
-        // For unknown protocol, we have to discard it safely to avoid stuck pipeline
+        // For unknown protocol, we have to move the readerIndex until we get proper protocol
         in.resetReaderIndex();
-        in.skipBytes(in.readableBytes());
+        in.skipBytes(1);
     }
 
 
@@ -48,18 +48,24 @@ public class GpsFrameDecoder extends ByteToMessageDecoder {
         return (a == 0 && b ==0);  // teltonica AVL data starts with two zeros
     }
     private ByteBuf decodeTeltonicaFrame(ByteBuf in){
-        if(in.readableBytes() < 4) return null; // these 4 bytes are needed to read length field
-        int length = in.getInt(in.readerIndex());
-        if(length <= 0 || length > MAX_FRAME_LENGTH) {
-            in.skipBytes(in.readableBytes());
+        if(in.readableBytes() < 8) return null; // not enough data
+
+        int reader = in.readerIndex();
+        int startBytes = in.getUnsignedShort(reader); //0x00 0x00
+        int avlLength = in.getInt(reader + 2); // length is found after the two bytes
+
+        if(avlLength <= 0 || avlLength > MAX_FRAME_LENGTH) {
+            in.skipBytes(in.readableBytes()); // corrupted data
             return null;
         }
-        if(in.readableBytes() < length + 4) {
+        int fullFrameLength = 2 + 4 + avlLength;
+
+        if(in.readableBytes() < fullFrameLength) {
             return null;   //wait for more bytes
         }
 
         in.skipBytes(4); // skip the length byte
-        return in.readRetainedSlice(length); //extract the exact frame after the length byte and return it
+        return in.readRetainedSlice(fullFrameLength); //extract the exact frame after the length byte and return it
     }
     private boolean isGt06Frame(ByteBuf in){   // concox Gt06 GPS devices
         // Gt06 uses 0x78 0x78 or 0x79 0x79 start bytes
