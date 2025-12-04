@@ -14,6 +14,7 @@ import java.util.Map;
 public class TeltonicaProtocolDecoder extends SimpleChannelInboundHandler<ByteBuf> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ByteBuf buf) throws Exception {
+        //we expect buf to contain only avl data array (from codec id - second data count)
         List<GpsMessage> messages = decodeTeltonicaAVL(buf);
         for(GpsMessage msg : messages){
             ctx.fireChannelRead(msg);
@@ -21,27 +22,33 @@ public class TeltonicaProtocolDecoder extends SimpleChannelInboundHandler<ByteBu
     }
     private List<GpsMessage> decodeTeltonicaAVL(ByteBuf buf) {
         List<GpsMessage> messages = new ArrayList<>();
-        if(buf.readableBytes() < 2) { // at least codec and count
-            return messages; // empty (there is no data)
+        if(buf.readableBytes() < 2) { // at least codec + count are needed
+            return messages; // return empty messages (there is no data)
         }
         int codecId = buf.readUnsignedByte();
         int recordCount = buf.readUnsignedByte();
-        for(int i =0; i<recordCount; i++){
+        for(int readerIndex =0; readerIndex < recordCount; readerIndex++){
+            int fixedRecordMinimum = 8/*timestamp*/ + 1/*priority*/ + 4/*longitude*/ + 4/*latitude*/ + 2/*altitude*/ +
+                    2/*angle*/ + 1/*satellites*/  + 2/*speed*/;
 
-            if(buf.readableBytes() < 8 + 1 + 4 + 4 + 2 + 2 + 1 + 2){ // this means no enough data for a full record
-                break;
+            if(buf.readableBytes() < fixedRecordMinimum){ // this means no enough data for a full record
+                break; // stop
             }
 
-            long timestamp = buf.readLong();
-            int priority = buf.readUnsignedByte();
-            int rawLat = buf.readInt();
-            double latitude = rawLat / 1E7; // raw lat divided by 10 million
-            int rawLon = buf.readInt();
-            double longitude = rawLon / 1E7; // raw lon divided by 10 million
-            short altitude = buf.readShort();
+            long timestamp = buf.readLong();// 8 bytes long ms - epoch
+            int priority = buf.readUnsignedByte();// 1 byte
+
+            int rawLat = buf.readInt();// 4 bytes signed
+            double latitude = rawLat / 1e7; // raw lat divided by 10 million
+
+            int rawLon = buf.readInt();// 4 bytes signed
+            double longitude = rawLon / 1e7; // raw lon divided by 10 million
+
+            short altitude = buf.readShort();// 2 byes signed
             int angle = buf.readUnsignedShort(); // course / direction
-            int satellites = buf.readUnsignedByte();
-            int speed = buf.readUnsignedShort();
+            int satellites = buf.readUnsignedByte(); // 1 byte
+            int speed = buf.readUnsignedShort(); // 2 bytes
+
             IOParsed parsedIOElements = parseIOElements(buf);
 
             GpsMessage message = new GpsMessage(
@@ -84,6 +91,7 @@ public class TeltonicaProtocolDecoder extends SimpleChannelInboundHandler<ByteBu
         parsed.totalIO = buf.readUnsignedByte();
 
         // N1 - each value has 1 byte length
+        if (buf.readableBytes() < 1) return parsed;
         int n1 = buf.readUnsignedByte();
         for(int i = 1; i < n1; i++) {
             if(buf.readableBytes() < 2) break; // at least ID + 1 byte is needed
@@ -93,6 +101,7 @@ public class TeltonicaProtocolDecoder extends SimpleChannelInboundHandler<ByteBu
         }
 
         // N2 - each value has 2 bytes length
+        if (buf.readableBytes() < 1) return parsed;
         int n2 = buf.readUnsignedByte();
         for(int i = 1; i < n2; i++) {
             if(buf.readableBytes() < 3) break; // at least ID + 2 bytes is needed
@@ -102,6 +111,7 @@ public class TeltonicaProtocolDecoder extends SimpleChannelInboundHandler<ByteBu
         }
 
         // N4 - each value has 4 bytes length
+        if (buf.readableBytes() < 1) return parsed;
         int n4 = buf.readUnsignedByte();
         for(int i = 1; i < n4; i++) {
             if(buf.readableBytes() < 5) break; // at least ID + 4 bytes is needed
@@ -109,6 +119,9 @@ public class TeltonicaProtocolDecoder extends SimpleChannelInboundHandler<ByteBu
             int value = buf.readInt(); // value is 4 bytes int in the case of n4
             parsed.ioMap.put(id, value);
         }
+
+        // N4 - each value has 4 bytes length
+        if (buf.readableBytes() < 1) return parsed;
         int n8 = buf.readUnsignedByte();
         for(int i = 1; i < n8; i++) {
             if(buf.readableBytes() < 9) break; // at least ID + 8 bytes is needed
