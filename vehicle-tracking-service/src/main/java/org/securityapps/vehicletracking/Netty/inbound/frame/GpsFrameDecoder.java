@@ -98,15 +98,18 @@ public class GpsFrameDecoder extends ByteToMessageDecoder {
             // if not Gt06, skip
             return null;
         }
-        int length = in.getUnsignedByte(in.readerIndex()+2);
-        if(length <= 0 || length > MAX_FRAME_LENGTH){
+        int payloadLength = in.readUnsignedByte();
+
+        if(payloadLength <= 0 || payloadLength > MAX_FRAME_LENGTH){
             in.skipBytes(in.readableBytes());
             return null;
         }
-        /*Gt06 full frame length is - start(2 bytes) + packet length(1 byte) +
+        /*Gt06 full frame length is - start(2 bytes) + payload length(1 byte) +
         payload[from protocol number up to crc/errorCheck](length bytes) +
         stop(2 bytes) */
-        int frameLength = length + 5; // length + 2 + 1 + 2 -> start, length, stop respectively
+
+        //full frameLength = start(2 bytes) + payloadLength(1 byte) + payload(length bytes) + stop(2 bytes)
+        int frameLength = payloadLength + 5;
 
         if(in.readableBytes() < frameLength){
             return null; // if it is incomplete frame, we wait until full frame arrives
