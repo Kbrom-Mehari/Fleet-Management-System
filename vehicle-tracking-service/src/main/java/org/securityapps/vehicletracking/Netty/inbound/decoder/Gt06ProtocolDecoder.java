@@ -20,19 +20,20 @@ public class Gt06ProtocolDecoder extends SimpleChannelInboundHandler<ByteBuf> {
     }
     private GpsMessage decodeGt06(ByteBuf buf) {
         buf.skipBytes(2); // skip the start bytes 0x78 0x78 or 0x79 0x79
-        int length = buf.readUnsignedByte();
+        int payloadLength = buf.readUnsignedByte();
         int protocol =  buf.readUnsignedByte();
 
         switch (protocol) {
             case 0x01 -> {  // LOGIN PACKET
                 buf.skipBytes(8); // skip 8 bytes of IMEI
                 buf.skipBytes(4); // serial(2 bytes) + crc(2 bytes)
+                buf.skipBytes(2); // stop(2 bytes)
 
                 return null;
             }
 
             case 0x13 -> {  // HEARTBEAT / STATUS PACKET
-                int remaining = length - 1; // protocol is already consumed, we skip the remaining
+                int remaining = payloadLength + 2/*stop bytes*/ - 1/*protocol*/; // protocol is already consumed,
                 buf.skipBytes(remaining);
                 return null;
 
@@ -45,7 +46,7 @@ public class Gt06ProtocolDecoder extends SimpleChannelInboundHandler<ByteBuf> {
                 return decodeLocation(buf);
             }
             default -> {
-                int remaining = length - 1;
+                int remaining = payloadLength + 2 - 1;
                 buf.skipBytes(remaining);
                 return null;
             }
