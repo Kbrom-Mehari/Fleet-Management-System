@@ -112,63 +112,78 @@ public class Gt06ProtocolDecoder extends SimpleChannelInboundHandler<ByteBuf> {
         }
 
     }
-    private GpsMessage decodeGt06(ByteBuf buf) {
 
-       return null;
+    private GpsMessage decodeLocation(ByteBuf frame,int frameReaderIndex){
+
+        int idx = frameReaderIndex + 4; // protocol is at 2+1+1 => idx after protocol
+
+        try {
+            // THE FOLLOWING IS GPS INFORMATION
+            // Gt06 devices send timestamp in YYMMDDhhmmss format
+            int year = frame.getUnsignedByte(idx++) + 2000;
+            int month = frame.getUnsignedByte(idx++);
+            int day = frame.getUnsignedByte(idx++);
+            int hour = frame.getUnsignedByte(idx++);
+            int minute = frame.getUnsignedByte(idx++);
+            int second = frame.getUnsignedByte(idx++);
+
+            LocalDateTime dt = LocalDateTime.of(year, month, day, hour, minute, second);
+            Instant timestamp = dt.toInstant(ZoneOffset.UTC); // UTC time format
+
+            /* GPS info length + satellites byte are sent inside one byte like 4 upper bits and 4 lower bits
+               we use bit-splitting technique to extract gpsInfoLength and number of satellites
+            */
+            int infoSat = frame.getUnsignedByte(idx++);
+            int gpsInfoLength = (infoSat >> 4) & 0x0F;
+            int satellites = infoSat & 0x0F;
+
+            long rawLat = frame.getUnsignedInt(idx);
+            idx += 4; //int
+            long rawLon = frame.getUnsignedInt(idx);
+            idx += 4; //int
+            double latitude = rawLat / 1.8E6;
+            double longitude = rawLon / 1.8E6;
+            int speed = frame.getUnsignedByte(idx++);
+            int courseStatus = frame.getUnsignedShort(idx);
+            idx += 2; // short
+
+            /* course is low 10 bits
+               the upper 6 bits are status flags like ignition, GPS fix, validity flags, etc
+               I will decode them later when I support gt06 officially
+            */
+            int course = courseStatus & 0x03FF;
+
+            // THE FOLLOWING IS LBS(Location Based Services) INFORMATION
+            int MCC = frame.getUnsignedShort(idx); idx += 2; // Mobile Country Code
+            int MNC = frame.getUnsignedByte(idx++);        // Mobile Network Code
+            int LAC = frame.getUnsignedShort(idx); idx += 2; // Location Area Code
+
+            //next, we have cellId with 3 bytes with Big-Endian(most significant byte comes first)
+            int cellHigh = frame.getUnsignedShort(idx); idx += 2; // 2 bytes
+            int cellLow = frame.getUnsignedByte(idx++); // 1 byte (we are doing this b/c we can't parse 3 bytes at a time)
+            long cellId = ((long) cellHigh << 8) | cellLow; //we shift 8 bits(for cellLow - 1 byte) then, or it with cellLow
+
+            // serial (2) and CRC(2) are after these; CRC already validated in parent
+
+            GpsMessage message = new GpsMessage(latitude,
+                    longitude,
+                    speed,
+                    (short) 0,
+                    courseStatus,
+                    satellites,
+                    0,
+                    0,
+                    0,
+                    null,
+                    timestamp);
+
+            return message;
+        }
+        catch (Exception e) {
+            return null;
+        }
     }
 
-    private GpsMessage decodeLocation(ByteBuf buf,int frameReaderIndex){
-
-        int idx = frameReaderIndex + 3; // protocol is at +2+1 => idx after protocol
-
-
-        // THE FOLLOWING IS GPS INFORMATION
-        long timestamp = decodeDateTime(buf);
-        int satellites = buf.readUnsignedByte();
-        double latitude = buf.readInt()/1.8E6;
-        double longitude = buf.readInt()/1.8E6;
-        int speed = buf.readUnsignedByte();
-        int courseStatus = buf.readUnsignedShort();
-
-        // THE FOLLOWING IS LBS(Location Based Services) INFORMATION
-        int MCC = buf.readUnsignedShort();   // Mobile Country Code
-        int MNC = buf.readUnsignedByte();   // Mobile Network Code
-        int LAC = buf.readUnsignedShort(); // Location Area Code
-        //next, we have cellId with 3 bytes with Big-Endian(most significant byte comes first)
-        int cellHigh = buf.readUnsignedShort(); // 2 bytes
-        int cellLow = buf.readUnsignedByte(); // 1 byte (we are doing this b/c we can't parse 3 bytes at a time)
-        long cellId = ((long) cellHigh << 8) | cellLow; //we shift 8 bits(for cellLow - 1 byte) then, or it with cellLow
-        // next are serial number(2 bytes) and CRC /Error Check (2 bytes), we skip them
-        buf.skipBytes(4);
-        //the last two bytes (stop bytes) are consumed in frameDecoder class
-
-        GpsMessage message = new GpsMessage(latitude,
-                longitude,
-                speed,
-                (short) 0,
-                courseStatus,
-                satellites,
-                0,
-                0,
-                0,
-                null,
-                Instant.ofEpochSecond(timestamp));
-
-        return message;
-    }
-
-    private long decodeDateTime(ByteBuf buf){
-        // Gt06 devices send timestamp in YYMMDDhhmmss format
-        int year = buf.readUnsignedByte() + 2000;
-        int month = buf.readUnsignedByte();
-        int day = buf.readUnsignedByte();
-        int hour = buf.readUnsignedByte();
-        int minute = buf.readUnsignedByte();
-        int second = buf.readUnsignedByte();
-
-        LocalDateTime dt = LocalDateTime.of(year, month, day, hour, minute, second);
-        return dt.toEpochSecond(ZoneOffset.UTC); // UTC time format
-    }
     private String bcdToImei(byte[] bcd) {
         StringBuilder sb = new StringBuilder();
 
