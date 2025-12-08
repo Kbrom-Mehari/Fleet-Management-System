@@ -137,7 +137,7 @@ public class TeltonicaProtocolDecoder extends SimpleChannelInboundHandler<ByteBu
     private static class IOParsed{
         int eventId = 0;
         int totalIO = 0;
-        final Map<Integer,Object> ioMap = new HashMap<Integer, Object>(); // map of IO element's Id and it's value
+        final Map<Integer,Object> ioMap = new HashMap<>(); // map of IO element's Id and it's value
     }
 
 }
