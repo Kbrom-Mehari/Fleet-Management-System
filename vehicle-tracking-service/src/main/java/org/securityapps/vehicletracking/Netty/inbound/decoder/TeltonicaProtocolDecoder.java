@@ -13,43 +13,57 @@ import java.util.Map;
 
 public class TeltonicaProtocolDecoder extends SimpleChannelInboundHandler<ByteBuf> {
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, ByteBuf buf) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, ByteBuf frame) throws Exception {
         //we expect buf to contain only avl data array (from codec id - second data count)
-        List<GpsMessage> messages = decodeTeltonicaAVL(buf);
+        List<GpsMessage> messages = decodeTeltonicaAVL(frame);
         for(GpsMessage msg : messages){
             ctx.fireChannelRead(msg);
         }
     }
-    private List<GpsMessage> decodeTeltonicaAVL(ByteBuf buf) {
+    private List<GpsMessage> decodeTeltonicaAVL(ByteBuf frame) {
         List<GpsMessage> messages = new ArrayList<>();
-        if(buf.readableBytes() < 2) { // at least codec + count are needed
-            return messages; // return empty messages (there is no data)
-        }
-        int codecId = buf.readUnsignedByte();
-        int recordCount = buf.readUnsignedByte();
-        for(int readerIndex =0; readerIndex < recordCount; readerIndex++){
-            int fixedRecordMinimum = 8/*timestamp*/ + 1/*priority*/ + 4/*longitude*/ + 4/*latitude*/ + 2/*altitude*/ +
-                    2/*angle*/ + 1/*satellites*/  + 2/*speed*/;
 
-            if(buf.readableBytes() < fixedRecordMinimum){ // this means no enough data for a full record
+        /* we need minimum of 45 bytes for meaningful data
+        4 bytes of zeros + 4 bytes of dataFieldLength + 1 byte of codecId + 1 byte of numberOfData1 +
+        30(min),147(max) bytes of AVL data + 1 byte of numberOfData2 + 4 bytes of crc16
+        */
+        if(frame.readableBytes() < 45) {
+            return messages; // return empty messages (there is no enough data)
+        }
+        int zero1 = frame.readUnsignedByte();
+        int zero2 = frame.readUnsignedByte();
+        int zero3 = frame.readUnsignedByte();
+        int zero4 = frame.readUnsignedByte();
+
+        int dataFieldLength = frame.readInt();
+
+        int codecId = frame.readUnsignedByte();
+        int numberOfData1 = frame.readUnsignedByte();
+
+        for(int i =0; i < numberOfData1; i++){
+
+            int fixedRecordMinimum = 8/*timestamp*/ + 1/*priority*/ + 4/*longitude*/ + 4/*latitude*/ + 2/*altitude*/ +
+                    2/*angle*/ + 1/*satellites*/  + 2/*speed*/;  //15 bytes in total
+
+            if(frame.readableBytes() < fixedRecordMinimum){ // this means no enough data for a full record
                 break; // stop
             }
 
-            long timestamp = buf.readLong();// 8 bytes long ms - epoch
-            int priority = buf.readUnsignedByte();// 1 byte
+            long timestamp = frame.readLong();// 8 bytes long milliseconds - epoch
+            int priority = frame.readUnsignedByte();// 1 byte - 0 for low, 1 for high, 2 for panic
 
-            int rawLat = buf.readInt();// 4 bytes signed
-            double latitude = rawLat / 1e7; // raw lat divided by 10 million
+            int rawLat = frame.readInt();// 4 bytes signed
+            double latitude = rawLat / 1e7; // raw lat divided by 10 million (precision)
 
-            int rawLon = buf.readInt();// 4 bytes signed
-            double longitude = rawLon / 1e7; // raw lon divided by 10 million
+            int rawLon = frame.readInt();// 4 bytes signed
+            double longitude = rawLon / 1e7; // raw lon divided by 10 million (precision)
 
-            short altitude = buf.readShort();// 2 byes signed
-            int angle = buf.readUnsignedShort(); // course / direction
-            int satellites = buf.readUnsignedByte(); // 1 byte
-            int speed = buf.readUnsignedShort(); // 2 bytes
+            short altitude = frame.readShort();// 2 byes signed
+            int angle = frame.readUnsignedShort(); // course / direction
+            int satellites = frame.readUnsignedByte(); // 1 byte
+            int speed = frame.readUnsignedShort(); // 2 bytes
 
-            IOParsed parsedIOElements = parseIOElements(buf);
+            IOParsed parsedIOElements = parseIOElements(frame);
 
             GpsMessage message = new GpsMessage(
                     latitude,
@@ -66,17 +80,17 @@ public class TeltonicaProtocolDecoder extends SimpleChannelInboundHandler<ByteBu
             );
             messages.add(message);
         }
-        int recordCount2;
-        if(buf.readableBytes() >= 1){
-            recordCount2 = buf.readUnsignedByte();
-            if(recordCount != recordCount2){
-                System.err.printf("Teltonica: Record count mismatch! First: %d, Second: %d%n",recordCount,recordCount2);
-            }
+        int numberOfData2 = frame.readUnsignedByte();
+
+        if(numberOfData1 != numberOfData2){
+                System.err.printf("Teltonica: Record count mismatch! First: %d, Second: %d%n",numberOfData1,numberOfData2);
         }
 
-        if(buf.readableBytes() >= 4){
-            int crc = buf.readInt(); // we consume it. validating crc isn't needed since TCP is reliable
-        }
+        int
+
+       /*
+
+       */
 
         return  messages;
     }
@@ -84,9 +98,8 @@ public class TeltonicaProtocolDecoder extends SimpleChannelInboundHandler<ByteBu
     // the following method returns a container with eventId, totalIO and a map of IO element's id and it's value
     private IOParsed parseIOElements(ByteBuf buf) {
         IOParsed parsed = new IOParsed();
-        if(buf.readableBytes() < 2) { // we need to have at least two bytes for eventId and totalIO
-            return parsed;
-        }
+        if(buf.readableBytes() < 2) return parsed; // we need to have at least two bytes for eventId and totalIO
+
         parsed.eventId = buf.readUnsignedByte();
         parsed.totalIO = buf.readUnsignedByte();
 
@@ -120,7 +133,7 @@ public class TeltonicaProtocolDecoder extends SimpleChannelInboundHandler<ByteBu
             parsed.ioMap.put(id, value);
         }
 
-        // N4 - each value has 4 bytes length
+        // N8 - each value has 8 bytes length
         if (buf.readableBytes() < 1) return parsed;
         int n8 = buf.readUnsignedByte();
         for(int i = 1; i < n8; i++) {
@@ -138,6 +151,9 @@ public class TeltonicaProtocolDecoder extends SimpleChannelInboundHandler<ByteBu
         int eventId = 0;
         int totalIO = 0;
         final Map<Integer,Object> ioMap = new HashMap<>(); // map of IO element's Id and it's value
+    }
+    private boolean crc16Validated(){
+
     }
 
 }
