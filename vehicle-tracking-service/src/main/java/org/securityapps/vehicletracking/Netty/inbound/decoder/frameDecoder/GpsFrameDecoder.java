@@ -118,4 +118,24 @@ public class GpsFrameDecoder extends ByteToMessageDecoder {
 
         return in.readRetainedSlice(frameLength); // return the full frame
     }
+
+    private boolean isTeltonicaImei(ByteBuf in){
+        if(in.readableBytes() < 2) return false;
+
+        int reader = in.readerIndex();
+        int length = in.getUnsignedShort(reader);
+
+        if(length < 14 || length > 18) return false;
+
+        if(in.readableBytes() < 2 + length) return false;
+
+        for(int i = 0; i < length; i++){
+            int b = in.getUnsignedByte(reader + 2 + i);
+            if(b < '0' || b > '9'){
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
