@@ -138,4 +138,13 @@ public class GpsFrameDecoder extends ByteToMessageDecoder {
 
         return true;
     }
+
+    private ByteBuf decodeTeltonicaImei(ByteBuf in){
+        int reader = in.readerIndex();
+        int length = in.readUnsignedShort();
+
+        if(in.readableBytes() < length)  return null;
+
+        return in.readRetainedSlice(length); //only the imei bytes
+    }
 }
