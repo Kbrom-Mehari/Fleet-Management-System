@@ -3,7 +3,9 @@ package org.securityapps.vehicletracking.Netty.inbound.decoder.frameDecoder;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
+import org.securityapps.vehicletracking.Netty.inbound.decoder.teltonica.TeltonicaImeiFrame;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class GpsFrameDecoder extends ByteToMessageDecoder {
@@ -28,6 +30,16 @@ public class GpsFrameDecoder extends ByteToMessageDecoder {
             ByteBuf frame = decodeTeltonicaFrame(in);
             if(frame != null){
                 out.add(frame);
+            }
+            return;
+        }
+
+        if(isTeltonicaImei(in)){
+            String imei = decodeTeltonicaImei(in);
+
+            if(imei != null){
+                TeltonicaImeiFrame teltonicaImeiFrame = new TeltonicaImeiFrame(imei);
+                out.add(teltonicaImeiFrame);
             }
             return;
         }
@@ -120,12 +132,13 @@ public class GpsFrameDecoder extends ByteToMessageDecoder {
     }
 
     private boolean isTeltonicaImei(ByteBuf in){
-        if(in.readableBytes() < 2) return false;
+        if(in.readableBytes() < 2) return false; //the first two bytes are length of the imei
 
         int reader = in.readerIndex();
         int length = in.getUnsignedShort(reader);
 
-        if(length < 14 || length > 18) return false;
+        //Teltonika IMEI is always 15 ASCII digits
+        if(length != 15) return false;
 
         if(in.readableBytes() < 2 + length) return false;
 
@@ -139,12 +152,14 @@ public class GpsFrameDecoder extends ByteToMessageDecoder {
         return true;
     }
 
-    private ByteBuf decodeTeltonicaImei(ByteBuf in){
+    private String decodeTeltonicaImei(ByteBuf in){
         int reader = in.readerIndex();
         int length = in.readUnsignedShort();
 
         if(in.readableBytes() < length)  return null;
+        byte[] imeiBytes = new byte[length];
+        in.readBytes(imeiBytes);
 
-        return in.readRetainedSlice(length); //only the imei bytes
+        return new String(imeiBytes, StandardCharsets.US_ASCII); //only the imei bytes
     }
 }
