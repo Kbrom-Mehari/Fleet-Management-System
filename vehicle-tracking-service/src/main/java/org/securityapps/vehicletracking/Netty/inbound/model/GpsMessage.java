@@ -7,7 +7,7 @@ public record GpsMessage(
     double latitude,
     double longitude,
     int speedKph,
-    short altitude,
+    int altitude,
     int angle,
     int satellites,
     int priority,
