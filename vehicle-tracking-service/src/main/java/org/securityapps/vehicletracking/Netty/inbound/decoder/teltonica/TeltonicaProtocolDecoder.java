@@ -3,9 +3,10 @@ package org.securityapps.vehicletracking.Netty.inbound.decoder.teltonica;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import lombok.RequiredArgsConstructor;
 import org.securityapps.vehicletracking.Netty.inbound.model.GpsMessage;
+import org.securityapps.vehicletracking.Netty.inbound.model.TeltonicaLoginMessage;
 import org.securityapps.vehicletracking.Netty.util.Crc16;
 import org.securityapps.vehicletracking.infrastructure.persistence.repository.JpaTrackerDeviceRepository;
 
@@ -16,30 +17,42 @@ import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
-public class TeltonicaProtocolDecoder extends SimpleChannelInboundHandler<Object> {
+public class TeltonicaProtocolDecoder extends ChannelInboundHandlerAdapter {
 
     private final JpaTrackerDeviceRepository deviceRepository;
 
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, Object frame) throws Exception {
-        if(frame instanceof TeltonicaImeiFrame teltonicaImei){
-           ctx.writeAndFlush(isRegistered(teltonicaImei) ? 0x01 : 0x00);
-           return;
-        }
+    public void channelRead(ChannelHandlerContext ctx, Object frame) throws Exception {
 
-        ByteBuf avlBuf = (ByteBuf) frame;
-        TeltonicaAvlResult result = decodeTeltonicaAVL(avlBuf);
-        if(result != null) {
-            List<GpsMessage> messages = result.messages;
-            int numberOfData2 = result.numberOfData2;
-            if (messages != null) {
-                for (GpsMessage msg : messages) {
-                    ctx.fireChannelRead(msg);
+        try {
+            if (frame instanceof TeltonicaLoginMessage teltonicaLoginMessage) {
+                boolean isRegistered = isRegistered(teltonicaLoginMessage);
+                ctx.writeAndFlush(isRegistered ? 0x01 : 0x00);
+                ctx.fireChannelRead(teltonicaLoginMessage);
+            }
+            else if(frame instanceof ByteBuf avlBuf) {
+                TeltonicaAvlResult result = decodeTeltonicaAVL(avlBuf);
+                if (result != null) {
+                    List<GpsMessage> messages = result.messages;
+                    int numberOfData2 = result.numberOfData2;
+                    if (messages != null) {
+                        for (GpsMessage msg : messages) {
+                            ctx.fireChannelRead(msg);
+                        }
+                        ByteBuf ack = Unpooled.buffer(4);
+                        ack.writeInt(numberOfData2);
+                        ctx.writeAndFlush(ack);
+                    }
                 }
-                ByteBuf ack = Unpooled.buffer(4);
-                ack.writeInt(numberOfData2);
-                ctx.writeAndFlush(ack);
+            }
+            else{
+                ctx.fireChannelRead(frame);
+            }
+        }
+        finally {
+            if(frame instanceof ByteBuf buf){
+                buf.release();
             }
         }
     }
@@ -58,6 +71,8 @@ public class TeltonicaProtocolDecoder extends SimpleChannelInboundHandler<Object
         int zero2 = frame.readUnsignedByte();
         int zero3 = frame.readUnsignedByte();
         int zero4 = frame.readUnsignedByte();
+
+        if(zero1 != 0 || zero2 != 0 || zero3 != 0 || zero4 != 0) return null; //invalid frame bypassed
 
         int dataFieldLength = frame.readInt();
 
@@ -86,7 +101,7 @@ public class TeltonicaProtocolDecoder extends SimpleChannelInboundHandler<Object
             int rawLon = frame.readInt();// 4 bytes signed
             double longitude = rawLon / 1e7; // raw lon divided by 10 million (precision)
 
-            short altitude = frame.readShort();// 2 byes signed
+            int altitude = frame.readUnsignedShort();// 2 byes signed
             int angle = frame.readUnsignedShort(); // course / direction
             int satellites = frame.readUnsignedByte(); // 1 byte
             int speed = frame.readUnsignedShort(); // 2 bytes
@@ -119,7 +134,7 @@ public class TeltonicaProtocolDecoder extends SimpleChannelInboundHandler<Object
           CRC-16 calculated for [codec id, number of data 2]
         */
         frame.skipBytes(2);  //padding(two zeroes)
-        int receivedCrc = frame.readUnsignedShort(); //real crc
+        int receivedCrc = frame.readUnsignedShort(); //crc received from device
         int calculatedCrc = Crc16.compute(crcData);
 
         if(receivedCrc != calculatedCrc){
@@ -144,7 +159,7 @@ public class TeltonicaProtocolDecoder extends SimpleChannelInboundHandler<Object
         // N1 - each value has 1 byte length
         if (buf.readableBytes() < 1) return parsed;
         int n1 = buf.readUnsignedByte();
-        for(int i = 1; i < n1; i++) {
+        for(int i = 0; i < n1; i++) {
             if(buf.readableBytes() < 2) break; // at least ID + 1 byte is needed
             int id = buf.readUnsignedByte();
             int value = buf.readUnsignedByte();
@@ -154,7 +169,7 @@ public class TeltonicaProtocolDecoder extends SimpleChannelInboundHandler<Object
         // N2 - each value has 2 bytes length
         if (buf.readableBytes() < 1) return parsed;
         int n2 = buf.readUnsignedByte();
-        for(int i = 1; i < n2; i++) {
+        for(int i = 0; i < n2; i++) {
             if(buf.readableBytes() < 3) break; // at least ID + 2 bytes is needed
             int id = buf.readUnsignedByte();
             int value = buf.readUnsignedShort();
@@ -164,7 +179,7 @@ public class TeltonicaProtocolDecoder extends SimpleChannelInboundHandler<Object
         // N4 - each value has 4 bytes length
         if (buf.readableBytes() < 1) return parsed;
         int n4 = buf.readUnsignedByte();
-        for(int i = 1; i < n4; i++) {
+        for(int i = 0; i < n4; i++) {
             if(buf.readableBytes() < 5) break; // at least ID + 4 bytes is needed
             int id = buf.readUnsignedByte();
             int value = buf.readInt(); // value is 4 bytes int in the case of n4
@@ -174,7 +189,7 @@ public class TeltonicaProtocolDecoder extends SimpleChannelInboundHandler<Object
         // N8 - each value has 8 bytes length
         if (buf.readableBytes() < 1) return parsed;
         int n8 = buf.readUnsignedByte();
-        for(int i = 1; i < n8; i++) {
+        for(int i = 0; i < n8; i++) {
             if(buf.readableBytes() < 9) break; // at least ID + 8 bytes is needed
             int id = buf.readUnsignedByte();
             long value = buf.readLong(); // value is 8 bytes long in the case of n8
@@ -197,8 +212,9 @@ public class TeltonicaProtocolDecoder extends SimpleChannelInboundHandler<Object
         int numberOfData2;
     }
 
-    private boolean isRegistered(TeltonicaImeiFrame teltonicaImei){
-        return deviceRepository.findByImei(teltonicaImei.getImei()).isPresent();
+    private boolean isRegistered(TeltonicaLoginMessage teltonicaLoginMessage){
+        String imei = teltonicaLoginMessage.getImei();
+        return deviceRepository.findByImei(imei).isPresent();
     }
 
 }
