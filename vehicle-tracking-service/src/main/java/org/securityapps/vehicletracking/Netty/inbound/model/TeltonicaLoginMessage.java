@@ -1,9 +1,12 @@
 package org.securityapps.vehicletracking.Netty.inbound.model;
 
-import lombok.Getter;
+public record TeltonicaLoginMessage(String imei) implements GpsLoginMessage {
+    private static final String DEVICE_TYPE = "Teltonika";
 
-@Getter
-public class TeltonicaLoginMessage implements GpsLoginMessage {
-    private String imei;
-    private final String deviceType = "Teltonica";
+    public String getImei(){
+        return imei;
+    }
+    public String getDeviceType(){
+        return DEVICE_TYPE;
+    }
 }
