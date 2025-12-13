@@ -11,8 +11,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class GpsConnectionHandler extends ChannelInboundHandlerAdapter {
-    //Active device -> channel mapping
+    //Active device -> channel mapping, we map device imei with channel
     private static final Map<String , Channel> activeDevices = new ConcurrentHashMap<>();
+
     //channel attribute to store imei
     private static final AttributeKey<String> IMEI = AttributeKey.valueOf("imei");
 
@@ -36,7 +37,7 @@ public class GpsConnectionHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         // msg will be a decoded protocol message received from protocol decoder
-        // it could br login message or gps data message
+        // it could be login message or gps data message
         if(msg instanceof GpsLoginMessage loginMessage){
             handleLogin(ctx,loginMessage);
             return; // we don't forward login message to the next handler (gps message handler)
@@ -58,6 +59,13 @@ public class GpsConnectionHandler extends ChannelInboundHandlerAdapter {
 
     private void handleLogin (ChannelHandlerContext ctx, GpsLoginMessage msg){
         String imei = msg.getImei();
+
+        Channel existing = activeDevices.get(imei);
+        //prevent an active device from connecting twice. we disconnect the old channel
+        if(existing != null && existing != ctx.channel()){
+            System.out.println("[LOGIN] Duplicate connection detected for " + imei + ". Closing old channel.");
+            existing.close();
+        }
         // save IMEI into attribute channel
         ctx.channel().attr(IMEI).set(imei);
         // mark device as active
