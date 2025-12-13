@@ -3,7 +3,7 @@ package org.securityapps.vehicletracking.Netty.inbound.decoder.frameDecoder;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
-import org.securityapps.vehicletracking.Netty.inbound.decoder.teltonica.TeltonicaImeiFrame;
+import org.securityapps.vehicletracking.Netty.inbound.model.TeltonicaLoginMessage;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -38,8 +38,8 @@ public class GpsFrameDecoder extends ByteToMessageDecoder {
             String imei = decodeTeltonicaImei(in);
 
             if(imei != null){
-                TeltonicaImeiFrame teltonicaImeiFrame = new TeltonicaImeiFrame(imei);
-                out.add(teltonicaImeiFrame);
+                TeltonicaLoginMessage teltonicaLoginMessage = new TeltonicaLoginMessage(imei);
+                out.add(teltonicaLoginMessage);
             }
             return;
         }
@@ -153,7 +153,6 @@ public class GpsFrameDecoder extends ByteToMessageDecoder {
     }
 
     private String decodeTeltonicaImei(ByteBuf in){
-        int reader = in.readerIndex();
         int length = in.readUnsignedShort();
 
         if(in.readableBytes() < length)  return null;
