@@ -19,10 +19,10 @@ public class HeartBeatHandler extends ChannelInboundHandlerAdapter {
                 Channel channel = ctx.channel();
                 String imei = channel.attr(IMEI).get();
                 if(imei != null){
-                    System.out.println("[HEARTBEAT] Device idle, closing connection: " + imei);
+                    log.info("[HEARTBEAT] Device idle, closing connection: {}", imei);
                 }
                 else
-                    System.out.println("[HEARTBEAT] Unknown device idle, closing connection: "+ channel.remoteAddress());
+                    log.warn("[HEARTBEAT] Unknown device idle, closing connection: {}", channel.remoteAddress());
 
                 ctx.close(); // this triggers channel inactive cleanup in GpsConnectionHandler
             }
@@ -32,7 +32,7 @@ public class HeartBeatHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx,Throwable cause){
-        log.error("[HEARTBEAT] Exception : {} ",cause.getMessage());
+        log.error("[HEARTBEAT] Connection error for device : {} ",ctx.channel().attr(IMEI),cause);
         ctx.close();
     }
 }
