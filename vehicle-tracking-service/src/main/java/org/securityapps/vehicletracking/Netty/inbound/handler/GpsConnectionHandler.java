@@ -4,12 +4,14 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.AttributeKey;
+import lombok.extern.slf4j.Slf4j;
 import org.securityapps.vehicletracking.Netty.inbound.model.GpsLoginMessage;
 import org.securityapps.vehicletracking.Netty.inbound.model.GpsMessage;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Slf4j
 public class GpsConnectionHandler extends ChannelInboundHandlerAdapter {
     //Active device -> channel mapping, we map device imei with channel
     private static final Map<String , Channel> activeDevices = new ConcurrentHashMap<>();
@@ -19,18 +21,18 @@ public class GpsConnectionHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx){
-        System.out.println("[CONNECTION] New device connected: " + ctx.channel().remoteAddress());
+        log.info("[CONNECTION] New device connected: {}", ctx.channel().remoteAddress());
     }
     @Override
     public void channelInactive(ChannelHandlerContext ctx){
         //device disconnected - clean up
         String imei = ctx.channel().attr(IMEI).get();
         if(imei != null){
-            activeDevices.remove(imei);
-            System.out.println("[DISCONNECT] Device offline: " + imei);
+            activeDevices.remove(imei,ctx.channel());
+            log.info("[DISCONNECT] Device offline: {}", imei);
         }
         else{
-            System.out.println("[DISCONNECT] Unknown device disconnected.");
+            log.warn("[DISCONNECT] Unknown device disconnected.");
         }
     }
 
@@ -46,7 +48,7 @@ public class GpsConnectionHandler extends ChannelInboundHandlerAdapter {
             String imei = ctx.channel().attr(IMEI).get();
 
             if(imei == null){
-                System.out.println("[WARNING] device sent data before login! closing channel!");
+                log.warn("[WARNING] device sent data before login! closing channel!");
                 ctx.close();
                 return;
             }
@@ -60,18 +62,21 @@ public class GpsConnectionHandler extends ChannelInboundHandlerAdapter {
     private void handleLogin (ChannelHandlerContext ctx, GpsLoginMessage msg){
         String imei = msg.getImei();
 
-        Channel existing = activeDevices.get(imei);
+        //put method returns null if there is no existing channel and return the old value if
+        //we are updating it
+        Channel existing = activeDevices.put(imei, ctx.channel());
+
         //prevent an active device from connecting twice. we disconnect the old channel
         if(existing != null && existing != ctx.channel()){
-            System.out.println("[LOGIN] Duplicate connection detected for " + imei + ". Closing old channel.");
+            log.warn("[LOGIN] Duplicate connection detected for {}", imei + " Closing old channel.");
             existing.close();
         }
+
         // save IMEI into attribute channel
         ctx.channel().attr(IMEI).set(imei);
-        // mark device as active
-        activeDevices.put(imei, ctx.channel());
 
-        System.out.println("[LOGIN] Device authenticated! " + imei);
+        log.info("[LOGIN] Device authenticated: {}", imei);
+
 
         //handshake is handled in the protocol decoder. we do nothing about handshake here
     }
