@@ -4,7 +4,9 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.handler.codec.CorruptedFrameException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.securityapps.vehicletracking.Netty.inbound.model.GpsMessage;
 import org.securityapps.vehicletracking.Netty.inbound.model.TeltonicaLoginMessage;
 import org.securityapps.vehicletracking.Netty.util.Crc16;
@@ -16,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @RequiredArgsConstructor
 public class TeltonicaProtocolDecoder extends ChannelInboundHandlerAdapter {
 
@@ -55,6 +58,11 @@ public class TeltonicaProtocolDecoder extends ChannelInboundHandlerAdapter {
                 buf.release();
             }
         }
+    }
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause){
+        log.warn("[PROTOCOL] Protocol error! closing connection: ",cause);
+        ctx.close();
     }
 
     private TeltonicaAvlResult decodeTeltonicaAVL(ByteBuf frame) {
@@ -139,7 +147,7 @@ public class TeltonicaProtocolDecoder extends ChannelInboundHandlerAdapter {
 
         if(receivedCrc != calculatedCrc){
             messages.clear();
-            return null;
+            throw new CorruptedFrameException("Teltonika CRC16 mismatch !");
         }
 
         TeltonicaAvlResult result = new TeltonicaAvlResult();
