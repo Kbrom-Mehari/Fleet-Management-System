@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.Map;
 
 public record GpsMessage(
+    String imei,
     double latitude,
     double longitude,
     int speedKph,
