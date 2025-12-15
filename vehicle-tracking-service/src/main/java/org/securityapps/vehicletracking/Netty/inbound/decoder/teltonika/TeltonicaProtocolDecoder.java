@@ -117,6 +117,7 @@ public class TeltonicaProtocolDecoder extends ChannelInboundHandlerAdapter {
             IOParsed parsedIOElements = parseIOElements(frame);
 
             GpsMessage message = new GpsMessage(
+                    null,
                     latitude,
                     longitude,
                     speed,
@@ -134,7 +135,7 @@ public class TeltonicaProtocolDecoder extends ChannelInboundHandlerAdapter {
         int numberOfData2 = frame.readUnsignedByte();
 
         if(numberOfData1 != numberOfData2){
-                System.err.printf("Teltonica: Record count mismatch! First: %d, Second: %d%n",numberOfData1,numberOfData2);
+                log.warn("Teltonika: Record count mismatch! First: {}, Second: {}%n",numberOfData1,numberOfData2);
         }
 
         /*
