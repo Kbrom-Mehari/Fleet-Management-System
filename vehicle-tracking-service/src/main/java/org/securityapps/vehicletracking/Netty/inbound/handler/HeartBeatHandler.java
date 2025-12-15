@@ -27,7 +27,7 @@ public class HeartBeatHandler extends ChannelInboundHandlerAdapter {
                 ctx.close(); // this triggers channel inactive cleanup in GpsConnectionHandler
             }
         }
-        super.userEventTriggered(ctx, evt);
+        super.userEventTriggered(ctx, evt); //continue event propagation even after this handler
     }
 
     @Override
