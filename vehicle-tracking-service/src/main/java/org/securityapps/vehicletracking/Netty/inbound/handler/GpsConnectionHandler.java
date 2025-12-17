@@ -3,9 +3,9 @@ package org.securityapps.vehicletracking.Netty.inbound.handler;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
-import org.securityapps.vehicletracking.Netty.inbound.model.GpsLoginMessage;
+import org.securityapps.vehicletracking.Netty.attributes.ChannelAttributes;
+import org.securityapps.vehicletracking.Netty.inbound.model.DeviceLoginMessage;
 import org.securityapps.vehicletracking.Netty.inbound.model.GpsMessage;
 
 import java.util.Map;
@@ -16,8 +16,6 @@ public class GpsConnectionHandler extends ChannelInboundHandlerAdapter {
     //Active device -> channel mapping, we map device imei with channel
     private static final Map<String , Channel> activeDevices = new ConcurrentHashMap<>();
 
-    //channel attribute to store imei
-    private static final AttributeKey<String> IMEI = AttributeKey.valueOf("imei");
 
     @Override
     public void channelActive(ChannelHandlerContext ctx){
@@ -26,7 +24,7 @@ public class GpsConnectionHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelInactive(ChannelHandlerContext ctx){
         //device disconnected - clean up
-        String imei = ctx.channel().attr(IMEI).get();
+        String imei = ctx.channel().attr(ChannelAttributes.IMEI).get();
         if(imei != null){
             activeDevices.remove(imei,ctx.channel());
             log.info("[DISCONNECT] Device offline: {}", imei);
@@ -40,12 +38,12 @@ public class GpsConnectionHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         // msg will be a decoded protocol message received from protocol decoder
         // it could be login message or gps data message
-        if(msg instanceof GpsLoginMessage loginMessage){
+        if(msg instanceof DeviceLoginMessage loginMessage){
             handleLogin(ctx,loginMessage);
             return; // we don't forward login message to the next handler (gps message handler)
         }
         if(msg instanceof GpsMessage gpsData){
-            String imei = ctx.channel().attr(IMEI).get();
+            String imei = ctx.channel().attr(ChannelAttributes.IMEI).get();
 
             if(imei == null){
                 log.warn("[WARNING] device sent data before login! closing channel!");
@@ -59,7 +57,7 @@ public class GpsConnectionHandler extends ChannelInboundHandlerAdapter {
         ctx.fireChannelRead(msg);
     }
 
-    private void handleLogin (ChannelHandlerContext ctx, GpsLoginMessage msg){
+    private void handleLogin (ChannelHandlerContext ctx, DeviceLoginMessage msg){
         String imei = msg.getImei();
 
         //put method returns null if there is no existing channel and return the old value if
@@ -73,7 +71,7 @@ public class GpsConnectionHandler extends ChannelInboundHandlerAdapter {
         }
 
         // save IMEI into attribute channel
-        ctx.channel().attr(IMEI).set(imei);
+        ctx.channel().attr(ChannelAttributes.IMEI).set(imei);
 
         log.info("[LOGIN] Device authenticated: {}", imei);
 
