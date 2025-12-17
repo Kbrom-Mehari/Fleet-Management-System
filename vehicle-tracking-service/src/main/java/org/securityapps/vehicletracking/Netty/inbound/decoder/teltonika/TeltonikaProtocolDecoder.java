@@ -7,8 +7,8 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.CorruptedFrameException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.securityapps.vehicletracking.Netty.inbound.model.GpsMessage;
-import org.securityapps.vehicletracking.Netty.inbound.model.TeltonicaLoginMessage;
+import org.securityapps.vehicletracking.Netty.inbound.model.teltonika.TeltonikaGpsMessage;
+import org.securityapps.vehicletracking.Netty.inbound.model.teltonika.TeltonikaLoginMessage;
 import org.securityapps.vehicletracking.Netty.util.Crc16;
 import org.securityapps.vehicletracking.infrastructure.persistence.repository.JpaTrackerDeviceRepository;
 
@@ -29,18 +29,18 @@ public class TeltonikaProtocolDecoder extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object frame) throws Exception {
 
         try {
-            if (frame instanceof TeltonicaLoginMessage teltonicaLoginMessage) {
-                boolean isRegistered = isRegistered(teltonicaLoginMessage);
+            if (frame instanceof TeltonikaLoginMessage teltonikaLoginMessage) {
+                boolean isRegistered = isRegistered(teltonikaLoginMessage);
                 ctx.writeAndFlush(isRegistered ? 0x01 : 0x00);
-                ctx.fireChannelRead(teltonicaLoginMessage);
+                ctx.fireChannelRead(teltonikaLoginMessage);
             }
             else if(frame instanceof ByteBuf avlBuf) {
                 TeltonicaAvlResult result = decodeTeltonicaAVL(avlBuf);
                 if (result != null) {
-                    List<GpsMessage> messages = result.messages;
+                    List<TeltonikaGpsMessage> messages = result.messages;
                     int numberOfData2 = result.numberOfData2;
                     if (messages != null) {
-                        for (GpsMessage msg : messages) {
+                        for (TeltonikaGpsMessage msg : messages) {
                             ctx.fireChannelRead(msg);
                         }
                         ByteBuf ack = Unpooled.buffer(4);
@@ -66,7 +66,7 @@ public class TeltonikaProtocolDecoder extends ChannelInboundHandlerAdapter {
     }
 
     private TeltonicaAvlResult decodeTeltonicaAVL(ByteBuf frame) {
-        List<GpsMessage> messages = new ArrayList<>();
+        List<TeltonikaGpsMessage> messages = new ArrayList<>();
 
         /* we need minimum of 45 bytes for meaningful data
         4 bytes of zeros + 4 bytes of dataFieldLength + 1 byte of codecId + 1 byte of numberOfData1 +
@@ -116,7 +116,7 @@ public class TeltonikaProtocolDecoder extends ChannelInboundHandlerAdapter {
 
             IOParsed parsedIOElements = parseIOElements(frame);
 
-            GpsMessage message = new GpsMessage(
+            TeltonikaGpsMessage message = new TeltonikaGpsMessage(
                     null,
                     latitude,
                     longitude,
@@ -128,7 +128,9 @@ public class TeltonikaProtocolDecoder extends ChannelInboundHandlerAdapter {
                     parsedIOElements.eventId,
                     parsedIOElements.totalIO,
                     parsedIOElements.ioMap,
-                    Instant.ofEpochMilli(timestamp)
+                    Instant.ofEpochMilli(timestamp),
+                    null
+
             );
             messages.add(message);
         }
@@ -217,12 +219,12 @@ public class TeltonikaProtocolDecoder extends ChannelInboundHandlerAdapter {
 
     //the following is a wrapper class for returning gps messages and numberOfData2 to channelRead0 method
     private static class TeltonicaAvlResult{
-        List<GpsMessage> messages;
+        List<TeltonikaGpsMessage> messages;
         int numberOfData2;
     }
 
-    private boolean isRegistered(TeltonicaLoginMessage teltonicaLoginMessage){
-        String imei = teltonicaLoginMessage.getImei();
+    private boolean isRegistered(TeltonikaLoginMessage teltonikaLoginMessage){
+        String imei = teltonikaLoginMessage.getImei();
         return deviceRepository.findByImei(imei).isPresent();
     }
 
