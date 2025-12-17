@@ -3,7 +3,8 @@ package org.securityapps.vehicletracking.Netty.inbound.decoder.Gt06;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import org.securityapps.vehicletracking.Netty.inbound.model.GpsMessage;
+import org.securityapps.vehicletracking.Netty.inbound.model.Gt06.Gt06GpsMessage;
+import org.securityapps.vehicletracking.Netty.inbound.model.teltonika.TeltonikaGpsMessage;
 import org.securityapps.vehicletracking.Netty.util.Crc16;
 
 import java.time.Instant;
@@ -97,7 +98,7 @@ public class Gt06ProtocolDecoder extends SimpleChannelInboundHandler<ByteBuf> {
             }
 
             case 0x12, 0x10, 0x16 -> { // LOCATION/ALARM DATA PACKET
-                GpsMessage msg = decodeLocation(frame, reader);
+                Gt06GpsMessage msg = decodeLocation(frame, reader);
                 if (msg != null) {
                     ctx.fireChannelRead(msg);
                 }
@@ -112,7 +113,7 @@ public class Gt06ProtocolDecoder extends SimpleChannelInboundHandler<ByteBuf> {
 
     }
 
-    private GpsMessage decodeLocation(ByteBuf frame,int frameReaderIndex){
+    private Gt06GpsMessage decodeLocation(ByteBuf frame, int frameReaderIndex){
 
         int idx = frameReaderIndex + 4; // protocol is at 2+1+1 => idx after protocol
 
@@ -164,20 +165,18 @@ public class Gt06ProtocolDecoder extends SimpleChannelInboundHandler<ByteBuf> {
 
             // serial (2) and CRC(2) are after these; CRC already validated in parent
 
-            GpsMessage message = new GpsMessage(latitude,
+            return new Gt06GpsMessage(
+                    null,
+                    latitude,
                     longitude,
                     speed,
-                    (short) 0,
+                    0, //get altitude from status if available (later)
                     courseStatus,
                     satellites,
-                    0,
-                    0,
-                    0,
                     null,
-                    timestamp);
-
-            return message;
+                    null);
         }
+
         catch (Exception e) {
             return null;
         }
