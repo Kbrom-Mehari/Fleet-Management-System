@@ -4,7 +4,24 @@
 [versions]
 guava = "33.4.6-jre"
 junit-jupiter = "5.12.1"
+spring-boot = "3.5.6"  #version is used only by the plugin
 
 [libraries]
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit-jupiter" }
+
+spring-web = { module = "org.springframework.boot:spring-boot-starter-web" }
+spring-kafaka = { module = "org.springframework.kafka:spring-kafka" }
+spring-data-jpa = { module = "org.springframework.boot:spring-boot-starter-data-jpa" }
+spring-data-jdbc = { module = "org.springframework.boot:spring-boot-starter-data-jdbc" }
+lombok = { module = "org.projectlombok:lombok" }
+spring-test = { module = "org.springframework.boot:spring-boot-starter-test" }
+postgresql = { module = "org.postgresql:postgresql" }
+spring-redis = { module = "org.springframework.boot:spring-boot-starter-data-redis" }
+flyway = { module = "org.flywaydb:flyway-core" } #flyway db migration
+netty-all = { module = "io.netty:netty-all" } #all netty dependencies - transport, buffer, handler
+
+
+[plugins]
+spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
+
