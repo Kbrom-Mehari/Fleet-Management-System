@@ -19,7 +19,6 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok:1.18.32")
     implementation("com.google.guava:guava:32.1.2-jre")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("com.h2database:h2")
     runtimeOnly("org.postgresql:postgresql")
 
 }
