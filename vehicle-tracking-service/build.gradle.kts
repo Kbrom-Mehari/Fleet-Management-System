@@ -7,18 +7,19 @@ repositories{
     mavenCentral()
 }
 dependencies{
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("org.springframework.boot:spring-boot-starter-data-redis")
+    implementation(libs.spring.web)
+    implementation(libs.spring.data.jpa)
+    implementation(libs.spring.redis)
     implementation("org.apache.commons:commons-pool2")
-    implementation("org.flywaydb:flyway-core")
+    implementation(libs.flyway)
     implementation("io.netty:netty-buffer:4.1.118.Final")
     implementation("io.netty:netty-handler:4.1.118.Final")
     implementation("io.netty:netty-transport:4.1.118.Final")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    compileOnly("org.projectlombok:lombok:1.18.32")
-    annotationProcessor("org.projectlombok:lombok:1.18.32")
-    runtimeOnly("org.postgresql:postgresql")
+    implementation(libs.spring.kafaka)
+    testImplementation(libs.spring.test)
+    compileOnly(libs.lombok)
+    annotationProcessor(libs.lombok)
+    runtimeOnly(libs.postgresql)
 
 }
 java {
