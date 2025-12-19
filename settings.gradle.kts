@@ -10,6 +10,13 @@ plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
+dependencyResolutionManagement {
+    repositories {
+        mavenCentral()  //defines repositories, we can add another repository
+    }
+    //we don't need to activate version catalog explicitly here because we have libs.versions.toml file
+}
+
 rootProject.name = "fleet-management-system"
 include("vehicle-registry-service")
 include("vehicle-tracking-service")
