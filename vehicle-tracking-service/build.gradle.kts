@@ -1,20 +1,16 @@
 plugins {
-    id("org.springframework.boot") version "3.5.6"
-    id("io.spring.dependency-management") version "1.1.7"
+    alias(libs.plugins.spring.dependency.management) //spring dependency management
+    alias(libs.plugins.spring.boot) //spring boot plugin
     java
 }
-repositories{
-    mavenCentral()
-}
 dependencies{
+    //dependency aliases - cleaner and less prone to typos
     implementation(libs.spring.web)
     implementation(libs.spring.data.jpa)
     implementation(libs.spring.redis)
-    implementation("org.apache.commons:commons-pool2")
+    implementation(libs.apache.commons.pool2)
     implementation(libs.flyway)
-    implementation("io.netty:netty-buffer:4.1.118.Final")
-    implementation("io.netty:netty-handler:4.1.118.Final")
-    implementation("io.netty:netty-transport:4.1.118.Final")
+    implementation(libs.netty.all)
     implementation(libs.spring.kafaka)
     testImplementation(libs.spring.test)
     compileOnly(libs.lombok)
