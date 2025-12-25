@@ -13,5 +13,7 @@ import org.securityapps.vehicletracking.Netty.publisher.GpsMessagePublisher;
 public class KafkaGpsMessagePublisher implements GpsMessagePublisher {
     private final KafkaProducer<String, GpsMessage> producer;
 
+    public void publish(GpsMessage gpsMessage){
+
     }
 }
