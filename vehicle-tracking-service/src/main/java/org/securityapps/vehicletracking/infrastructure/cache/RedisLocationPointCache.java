@@ -16,15 +16,15 @@ public class RedisLocationPointCache {
     private static final Duration TTL = Duration.ofMinutes(30);
 
     public void save (VehicleLocationPoint locationPoint) {
-        String key = LAST_LOCATION_POINT_KEY_PREFIX+locationPoint.trackerDeviceId();
+        String key = LAST_LOCATION_POINT_KEY_PREFIX + locationPoint.trackerDeviceId();
         redisTemplate.opsForValue().set(key,locationPoint,TTL);
     }
     public VehicleLocationPoint getLastLocationPoint(String trackerDeviceId) {
-        String key = LAST_LOCATION_POINT_KEY_PREFIX+trackerDeviceId;
+        String key = LAST_LOCATION_POINT_KEY_PREFIX + trackerDeviceId;
         return redisTemplate.opsForValue().get(key);
     }
     public void removeLastLocationPoint(String trackerDeviceId) {
-        String key = LAST_LOCATION_POINT_KEY_PREFIX+trackerDeviceId;
+        String key = LAST_LOCATION_POINT_KEY_PREFIX + trackerDeviceId;
         redisTemplate.delete(key);
     }
 }
