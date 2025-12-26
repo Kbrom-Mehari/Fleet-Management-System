@@ -28,4 +28,21 @@ spring:
           max-wait:
           min-idle: 0
           time-between-eviction-runs: 1s
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+      acks: all
+      retries: 5
+
+      properties:
+        enable.idempotence: true
+
+        linger.ms: 5
+        batch.size: 32768
+
+        delivery.timeout.ms: 120000
+        request.timeout.ms: 30000
 
