@@ -1,7 +1,7 @@
 package org.securityapps.vehicletracking.Netty.publisher;
 
-import org.securityapps.vehicletracking.Netty.inbound.model.GpsMessage;
+import org.securityapps.vehicletracking.infrastructure.messaging.kafka.model.GpsRecordedEvent;
 
 public interface GpsMessagePublisher {
-    void publish(GpsMessage gpsMessage);
+    void publish(GpsRecordedEvent gpsRecordedEvent);
 }
