@@ -5,6 +5,7 @@ public record GpsRecordedEvent(
         double latitude,
         double longitude,
         double altitude,
+        double speed,
         int satellites,
         int course )
 { }
