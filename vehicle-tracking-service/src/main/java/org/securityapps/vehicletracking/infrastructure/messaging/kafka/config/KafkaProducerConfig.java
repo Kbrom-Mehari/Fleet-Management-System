@@ -14,9 +14,10 @@ import java.util.Map;
 public class KafkaProducerConfig {
     @Bean
     ProducerFactory<String, GpsRecordedEvent> producerFactory(KafkaProperties kafkaProperties){
-       return new DefaultKafkaProducerFactory<>(
+        //KafkaProperties builds all the kafka properties values from application.yml
+        return new DefaultKafkaProducerFactory<>(
                kafkaProperties.buildProducerProperties()
-       );
+        );
     }
     @Bean
     public KafkaTemplate<String, GpsRecordedEvent> kafkaTemplate (
