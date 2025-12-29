@@ -25,17 +25,17 @@ public class GpsFrameDecoder extends ByteToMessageDecoder {
 
         in.markReaderIndex(); // mark start point
 
-        if(isTeltonicaFrame(in)){
+        if(isTeltonikaFrame(in)){
             in.resetReaderIndex();
-            ByteBuf frame = decodeTeltonicaFrame(in);
+            ByteBuf frame = decodeTeltonikaFrame(in);
             if(frame != null){
                 out.add(frame);
             }
             return;
         }
 
-        if(isTeltonicaImei(in)){
-            String imei = decodeTeltonicaImei(in);
+        if(isTeltonikaImei(in)){
+            String imei = decodeTeltonikaImei(in);
 
             if(imei != null){
                 TeltonikaLoginMessage teltonikaLoginMessage = new TeltonikaLoginMessage(imei);
@@ -58,8 +58,8 @@ public class GpsFrameDecoder extends ByteToMessageDecoder {
     }
 
 
-    private boolean isTeltonicaFrame(ByteBuf in){
-        // Teltonica starts with 0x00 0x00 0x00 0x00 prefix
+    private boolean isTeltonikaFrame(ByteBuf in){
+        // Teltonika starts with 0x00 0x00 0x00 0x00 prefix
         if(in.readableBytes() < TLT_HEADER_ZEROS) return false; // the first 4 bytes(prefix) are needed
         int reader = in.readerIndex();
         for(int i = 0; i < TLT_HEADER_ZEROS; i++){
@@ -67,7 +67,7 @@ public class GpsFrameDecoder extends ByteToMessageDecoder {
         }
         return true;
     }
-    private ByteBuf decodeTeltonicaFrame(ByteBuf in){
+    private ByteBuf decodeTeltonikaFrame(ByteBuf in){
         if(in.readableBytes() < TLT_HEADER_ZEROS + TLT_LENGTH_BYTES) return null; //at least both are needed
 
         int reader = in.readerIndex();
@@ -131,7 +131,7 @@ public class GpsFrameDecoder extends ByteToMessageDecoder {
         return in.readRetainedSlice(frameLength); // return the full frame
     }
 
-    private boolean isTeltonicaImei(ByteBuf in){
+    private boolean isTeltonikaImei(ByteBuf in){
         if(in.readableBytes() < 2) return false; //the first two bytes are length of the imei
 
         int reader = in.readerIndex();
@@ -152,7 +152,7 @@ public class GpsFrameDecoder extends ByteToMessageDecoder {
         return true;
     }
 
-    private String decodeTeltonicaImei(ByteBuf in){
+    private String decodeTeltonikaImei(ByteBuf in){
         int length = in.readUnsignedShort();
 
         if(in.readableBytes() < length)  return null;
