@@ -1,7 +1,6 @@
 package org.securityapps.vehicletracking.Netty.util;
 
-/*This MAGIC class computes CRC for gt06 devices. But I don't know how (and I don't want too).
-and it is used to check if the data sent from the gt06 device is corrupt or not
+/*This MAGIC class computes CRC for gt06 devices. It is used to check if the data sent from the gt06 device is corrupt or not
 If the crc sent by the device and crc you check using this class are equal,
 data is safe(not corrupted) */
 public final class Crc16 {
