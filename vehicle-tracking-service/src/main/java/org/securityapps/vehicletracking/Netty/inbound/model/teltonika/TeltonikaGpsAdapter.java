@@ -27,9 +27,15 @@ public class TeltonikaGpsAdapter implements NormalizedGpsMessage {
         return message.speedKph;
     }
     @Override
-    public Instant recordedAt(){
+    public int satellites(){return message.satellites;}
+    @Override
+    public int angle(){return message.angle;}
+    @Override
+    public Instant deviceTime(){
         return message.deviceTime;
     }
+    @Override
+    public Instant receivedAt(){return message.receivedAt;}
     @Override
     public Optional<Double> fuelLevel(){
         return Optional.empty();
