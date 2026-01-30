@@ -8,7 +8,10 @@ public interface NormalizedGpsMessage {
     double latitude();
     double longitude();
     double speedKph();
-    Instant recordedAt();
+    int satellites();
+    int angle();
+    Instant deviceTime();
+    Instant receivedAt();
     Optional<Double> fuelLevel();
     Optional<Boolean> ignitionOn();
     Optional<Boolean> crashDetected();
