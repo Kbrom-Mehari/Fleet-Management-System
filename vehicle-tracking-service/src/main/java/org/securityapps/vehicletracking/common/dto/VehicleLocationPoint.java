@@ -7,9 +7,18 @@ public record VehicleLocationPoint(String trackerDeviceId,
         double latitude,
         double longitude,
         Double speed,
-        Double heading,
-        Instant recordedAt) {
+        Double angle,
+        Instant deviceTime,
+        Instant recordedAt)
+{
     public VehicleLocationPoint withSessionId(String sessionId) {
-        return new VehicleLocationPoint(trackerDeviceId, sessionId, latitude, longitude, speed, heading, recordedAt);
+        return new VehicleLocationPoint(trackerDeviceId,
+                sessionId,
+                latitude,
+                longitude,
+                speed,
+                angle,
+                deviceTime,
+                recordedAt);
     }
 }
