@@ -16,15 +16,15 @@ public class RedisTrackingSessionCache {
     private static final Duration SESSION_TTL= Duration.ofMinutes(30);
 
     public VehicleTrackingSession getActiveSession(String deviceId) {
-        String key=SESSION_KEY_PREFIX+deviceId;
+        String key=SESSION_KEY_PREFIX + deviceId;
         return redisTemplate.opsForValue().get(key);
     }
     public void cacheActiveSession(VehicleTrackingSession session) {
-        String key=SESSION_KEY_PREFIX+session.getTrackerDeviceId().toString();
+        String key=SESSION_KEY_PREFIX + session.getTrackerDeviceId().toString();
         redisTemplate.opsForValue().set(key,session,SESSION_TTL);
     }
     public void removeActiveSession(String deviceId) {
-        String key=SESSION_KEY_PREFIX+deviceId;
+        String key=SESSION_KEY_PREFIX + deviceId;
         redisTemplate.delete(key);
     }
 }
