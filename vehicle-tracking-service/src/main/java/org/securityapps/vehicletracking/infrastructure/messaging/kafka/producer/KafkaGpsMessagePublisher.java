@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.securityapps.vehicletracking.Netty.publisher.GpsMessagePublisher;
-import org.securityapps.vehicletracking.infrastructure.messaging.kafka.model.GpsRecordedEvent;
+import org.securityapps.vehicletracking.domain.event.GpsRecordedEvent;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 
