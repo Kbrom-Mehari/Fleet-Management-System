@@ -4,5 +4,6 @@
 # Ignore Gradle build output directory
 build
 
-# Ignore generated SoW document (run generate_sow_docx.py to produce it locally)
+# Ignore generated documents (run the generator scripts to produce them locally)
 Statement_of_Work.docx
+Pricing_and_Payment_Terms.docx
