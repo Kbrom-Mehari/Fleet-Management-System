@@ -3,3 +3,6 @@
 .idea
 # Ignore Gradle build output directory
 build
+
+# Ignore generated SoW document (run generate_sow_docx.py to produce it locally)
+Statement_of_Work.docx
