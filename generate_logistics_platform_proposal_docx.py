@@ -1,5 +1,5 @@
 """
-Generate a polished Logistics Platform Proposal (.docx).
+Generate a polished Strategic Logistics Platform Proposal (.docx).
 
 Requirements
 ------------
@@ -156,7 +156,7 @@ def build_document() -> Document:
     # ── Header ───────────────────────────────────────────────────────────────
     header = doc.sections[0].header
     header_para = header.paragraphs[0]
-    header_para.text = "Logistics Platform  |  Proposal"
+    header_para.text = "Strategic Logistics Platform  |  Proposal"
     header_para.alignment = WD_ALIGN_PARAGRAPH.RIGHT
     header_run = header_para.runs[0]
     header_run.font.size = Pt(9)
@@ -178,7 +178,7 @@ def build_document() -> Document:
     # ════════════════════════════════════════════════════════════════════════
     title_p = doc.add_paragraph()
     title_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    title_run = title_p.add_run("Logistics Platform Proposal")
+    title_run = title_p.add_run("Strategic Logistics Platform Proposal")
     title_run.bold = True
     title_run.font.size = Pt(26)
     title_run.font.color.rgb = NAVY
@@ -186,7 +186,7 @@ def build_document() -> Document:
 
     subtitle_p = doc.add_paragraph()
     subtitle_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    sub_run = subtitle_p.add_run("Digital Workflows • Real-Time Visibility • Optimized Routes")
+    sub_run = subtitle_p.add_run("Operational Clarity • Live Visibility • Smarter Routing")
     sub_run.font.size = Pt(14)
     sub_run.font.color.rgb = TEAL
     sub_run.font.name = "Calibri"
@@ -200,7 +200,7 @@ def build_document() -> Document:
     meta_data = [
         ("Prepared For", "Client Organization"),
         ("Prepared By", "Fleet Management Solutions Team"),
-        ("Document Type", "Logistics Platform Proposal"),
+        ("Document Type", "Strategic Logistics Platform Proposal"),
         ("Date", datetime.date.today().strftime("%B %d, %Y")),
     ]
 
@@ -235,25 +235,30 @@ def build_document() -> Document:
     add_section_heading(doc, "1.", "Executive Summary")
     add_body(
         doc,
-        "This proposal presents a modern logistics platform that digitizes traditional workflows "
-        "from shipment creation through delivery, settlement, and performance review. The solution "
-        "connects shippers, carriers, and operations teams in one coordinated environment that "
-        "reduces manual coordination and improves service reliability."
+        "Many logistics teams still rely on phone calls, emails, and spreadsheets to plan shipments "
+        "and track progress. This slows down assignment, increases coordination costs, and makes it "
+        "hard to give customers reliable updates."
     )
     add_body(
         doc,
-        "The platform prioritizes real-time live shipment tracking and intelligent route optimization "
-        "to deliver accurate ETAs, proactive exception management, and superior customer experience."
+        "The proposed platform brings shipment creation, carrier selection, tracking, and performance "
+        "management into one clear workflow. It reduces manual work, improves on-time delivery, and "
+        "gives leadership the visibility needed to make better decisions."
+    )
+    add_body(
+        doc,
+        "By combining live tracking with route optimization, the platform improves customer experience "
+        "and provides a competitive advantage through faster, more predictable service."
     )
 
     add_highlight_box(
         doc,
-        "Business Outcomes",
+        "Expected Business Results",
         [
-            "Cut dispatch time with smart shipment creation and automated carrier matching.",
-            "Improve on-time performance using live tracking and predictive ETAs.",
-            "Reduce cost per shipment by minimizing empty miles and route deviations.",
-            "Increase shipper confidence with transparent status events and proof of delivery.",
+            "Faster shipment assignment with fewer manual follow-ups.",
+            "Lower operating costs through smarter routing and reduced empty miles.",
+            "Higher customer satisfaction with accurate ETAs and proactive updates.",
+            "Stronger carrier performance through transparent accountability.",
         ],
     )
 
@@ -263,9 +268,9 @@ def build_document() -> Document:
     add_section_heading(doc, "2.", "Solution Overview")
     add_body(
         doc,
-        "The platform unifies shipment planning, carrier selection, execution, and settlement in a "
-        "single digital workflow. It supports multi-tenant operations, configurable approval rules, "
-        "and API-ready integration for ERP, TMS, and financial systems."
+        "The platform provides a single place to manage shipments, carriers, status updates, and "
+        "financial settlement. It is designed for operations teams and decision makers who need "
+        "simple, reliable information and consistent processes across locations and partners."
     )
 
     # ════════════════════════════════════════════════════════════════════════
@@ -276,42 +281,43 @@ def build_document() -> Document:
     add_sub_heading(doc, "3.1 Smart Shipment Creation & Carrier Matching")
     add_body(
         doc,
-        "Create shipments in seconds with structured templates, service-level rules, and automatic "
-        "carrier matching based on lanes, capacity, price, and performance history."
+        "Operations teams can create shipments quickly with guided forms and reusable templates. "
+        "The system matches loads to available carriers based on capacity, cost, and past performance, "
+        "reducing back-and-forth calls and speeding assignment."
     )
     for label, body in [
-        ("Guided shipment forms:", "Validated fields, commodity rules, and document capture."),
-        ("Posting & tendering:", "Broadcast to qualified carriers with configurable acceptance flows."),
-        ("Carrier marketplace:", "Rate cards, spot bids, and smart recommendations."),
-        ("Approval workflows:", "Enforce budget limits and service SLAs before confirmation."),
+        ("Fast shipment setup:", "Standard templates reduce errors and rework."),
+        ("Carrier recommendations:", "Qualified carriers are suggested instantly."),
+        ("Quick posting & acceptance:", "Shorten the time from request to confirmed assignment."),
+        ("Better carrier utilization:", "Use available capacity more efficiently."),
     ]:
         add_bullet(doc, label, body)
 
     add_sub_heading(doc, "3.2 Status & Event Tracking")
     add_body(
         doc,
-        "Every shipment is monitored through milestones, exceptions, and automated status events "
-        "to keep teams and customers aligned."
+        "Shipments are tracked through clear milestones and exceptions so teams stay aligned and "
+        "customers receive consistent updates."
     )
     for label, body in [
-        ("Milestone updates:", "Pickup, in-transit, at-hub, and delivery confirmations."),
-        ("Exception alerts:", "Delays, route deviations, temperature issues, or dwell-time flags."),
-        ("Customer notifications:", "Email/SMS updates with configurable frequency."),
-        ("Document management:", "Proof of delivery, signatures, and shipping documents stored centrally."),
+        ("Milestone visibility:", "Pickup, in-transit, at-hub, and delivery confirmations."),
+        ("Exception alerts:", "Delays, route deviations, and dwell-time issues flagged early."),
+        ("Customer notifications:", "Automated updates reduce inbound status calls."),
+        ("Proof of delivery:", "Documents and signatures stored in one place."),
     ]:
         add_bullet(doc, label, body)
 
     add_sub_heading(doc, "3.3 Settlement & Payment")
     add_body(
         doc,
-        "Integrated payment workflows simplify invoicing, reconciliation, and carrier settlement "
-        "while improving cashflow visibility."
+        "Payment workflows are simplified so finance teams can invoice faster and resolve disputes with "
+        "clear documentation."
     )
     for label, body in [
-        ("Automated invoicing:", "Generate invoices from completed shipments and rate cards."),
-        ("Dispute handling:", "Track discrepancies with audit trails and approval history."),
-        ("Carrier payouts:", "Scheduled settlements with payment status visibility."),
-        ("Revenue dashboards:", "Margin, cost per mile, and profitability analytics."),
+        ("Automated invoicing:", "Generate invoices directly from completed shipments."),
+        ("Dispute tracking:", "Reduce friction with auditable shipment history."),
+        ("Payment visibility:", "Know what is pending, approved, and paid."),
+        ("Profitability insights:", "Track cost per shipment and margin trends."),
     ]:
         add_bullet(doc, label, body)
 
@@ -321,15 +327,21 @@ def build_document() -> Document:
     add_section_heading(doc, "4.", "Real-Time Live Shipment Tracking")
     add_body(
         doc,
-        "Live tracking is the centerpiece of the platform. It provides continuous, map-based "
-        "visibility for every shipment, enabling teams to intervene early, reassure customers, "
-        "and protect service-level commitments."
+        "Live tracking gives operations teams continuous visibility into every shipment. The platform "
+        "supports both GPS tracking devices and smartphone-based driver tracking, allowing you to "
+        "choose the right approach by fleet and cost model."
+    )
+    add_body(
+        doc,
+        "Smartphone tracking reduces hardware costs and enables faster onboarding for contractors or "
+        "seasonal fleets without sacrificing real-time visibility."
     )
     for label, body in [
-        ("Instant visibility:", "Second-by-second location updates from carrier devices and mobile apps."),
-        ("Proactive exception response:", "Trigger alerts the moment a shipment is off-route or delayed."),
-        ("Trusted ETAs:", "Live feeds refine arrival estimates to reduce missed deliveries."),
-        ("Customer confidence:", "Shareable tracking links reduce inbound status calls."),
+        ("Device and smartphone tracking:", "Use existing GPS units or driver phones."),
+        ("Lower hardware costs:", "Reduce spend by relying on smartphone tracking where suitable."),
+        ("Faster adoption:", "Bring new drivers online quickly without device rollout delays."),
+        ("Proactive exception response:", "Act early when shipments fall behind schedule."),
+        ("Customer-facing visibility:", "Shareable tracking links build trust and reduce calls."),
     ]:
         add_bullet(doc, label, body)
 
@@ -339,15 +351,15 @@ def build_document() -> Document:
     add_section_heading(doc, "5.", "Route Optimization & ETA Intelligence")
     add_body(
         doc,
-        "Route optimization turns operational data into direct cost savings. The platform analyzes "
-        "distance, traffic, stop sequences, and delivery constraints to recommend the best route and "
-        "continuously update ETAs as conditions change."
+        "Route optimization reduces cost and improves delivery reliability by recommending the best "
+        "path and stop sequence for each shipment. ETAs are refreshed as conditions change so planning "
+        "remains accurate throughout the day."
     )
     for label, body in [
-        ("Lower operating costs:", "Reduce fuel spend and empty miles with optimized routing."),
-        ("On-time delivery gains:", "Prioritized stop sequencing and dynamic re-routing."),
-        ("Accurate planning:", "ETA predictions update with live conditions and driver status."),
-        ("Better asset utilization:", "Balance workloads and maximize fleet productivity."),
+        ("Reduced fuel costs:", "Shorter routes and fewer detours lower spend."),
+        ("Better vehicle utilization:", "Balance workloads and reduce empty miles."),
+        ("Faster deliveries:", "Traffic-aware routing and smarter stop sequencing."),
+        ("Improved planning:", "Reliable ETAs help staffing and customer commitments."),
     ]:
         add_bullet(doc, label, body)
 
@@ -357,13 +369,14 @@ def build_document() -> Document:
     add_section_heading(doc, "6.", "Trust, Reviews & Quality Control")
     add_body(
         doc,
-        "A review and rating system builds accountability and improves carrier performance over time."
+        "A structured ratings and reviews program strengthens accountability and helps improve service "
+        "quality over time."
     )
     for label, body in [
-        ("Post-delivery ratings:", "Shippers rate carriers and drivers on service quality."),
-        ("Performance scorecards:", "On-time %, damage rate, and compliance metrics."),
-        ("Carrier qualification:", "Automated eligibility rules based on historical performance."),
-        ("Issue resolution:", "Structured feedback loops for continuous improvement."),
+        ("Accountability:", "Performance is tracked against clear delivery expectations."),
+        ("Service quality:", "Highlight top carriers and address repeated issues."),
+        ("Trust and transparency:", "Shared feedback builds confidence across partners."),
+        ("Performance monitoring:", "Scorecards track on-time rates, damage, and responsiveness."),
     ]:
         add_bullet(doc, label, body)
 
@@ -373,13 +386,14 @@ def build_document() -> Document:
     add_section_heading(doc, "7.", "Additional Capabilities")
     add_body(
         doc,
-        "Supporting features ensure the platform is easy to adopt and scales with operational needs."
+        "Supporting features make the platform easy to operate day to day and scalable across the "
+        "business."
     )
     for label, body in [
-        ("Role-based access:", "Granular permissions for shippers, carriers, and admins."),
-        ("Analytics dashboards:", "Shipment volume, cost trends, and service KPIs."),
-        ("Integration APIs:", "Connect ERP, WMS, and accounting systems securely."),
-        ("Multi-branch operations:", "Support regional offices and partner networks."),
+        ("Role-based access:", "Each team sees only what they need."),
+        ("Operational dashboards:", "Track volume, cost, and service KPIs."),
+        ("System integrations:", "Connect finance, warehouse, and ERP tools."),
+        ("Multi-branch support:", "Standardize processes across locations."),
     ]:
         add_bullet(doc, label, body)
 
@@ -389,13 +403,13 @@ def build_document() -> Document:
     add_section_heading(doc, "8.", "Security & Reliability")
     add_body(
         doc,
-        "Security, uptime, and data integrity are built into every layer of the platform."
+        "Security and reliability are built in so the platform can be trusted for daily operations."
     )
     for label, body in [
-        ("Encrypted communications:", "TLS-secured APIs and device connections."),
-        ("Audit logging:", "Track every user action and shipment update."),
-        ("High availability:", "Redundant services and automated backups."),
-        ("Data residency options:", "Deploy on-premise or in approved cloud regions."),
+        ("Secure access controls:", "Protect sensitive shipment and customer data."),
+        ("Audit trails:", "Maintain a clear record of key actions and updates."),
+        ("Reliable availability:", "Designed for daily use with backups and monitoring."),
+        ("Deployment flexibility:", "Cloud or on-premise options based on policy."),
     ]:
         add_bullet(doc, label, body)
 
@@ -405,13 +419,13 @@ def build_document() -> Document:
     add_section_heading(doc, "9.", "Implementation & Support")
     add_body(
         doc,
-        "We deliver a structured rollout plan focused on adoption, performance, and measurable ROI."
+        "We provide a structured rollout that delivers value quickly and minimizes operational risk."
     )
     for label, body in [
-        ("Discovery workshops:", "Confirm workflows, lanes, and carrier network requirements."),
-        ("Configuration & onboarding:", "Set up workflows, roles, and integrations."),
-        ("Pilot launch:", "Validate real-time tracking and route optimization impact."),
-        ("Ongoing success:", "Continuous optimization and feature enhancements."),
+        ("Discovery & planning:", "Confirm workflows, lanes, and carrier network needs."),
+        ("Configuration & training:", "Set up workflows and onboard teams."),
+        ("Pilot launch:", "Prove value with a controlled rollout."),
+        ("Ongoing support:", "Continuous improvement and operational assistance."),
     ]:
         add_bullet(doc, label, body)
 
@@ -421,14 +435,91 @@ def build_document() -> Document:
     add_section_heading(doc, "10.", "Why This Platform")
     add_body(
         doc,
-        "This logistics platform delivers a measurable uplift in visibility, cost control, and service "
-        "quality. By combining real-time tracking with route intelligence, teams gain the confidence "
-        "to promise tighter delivery windows and consistently meet them."
+        "Traditional logistics operations often depend on phone calls, spreadsheets, and manual "
+        "follow-ups. This leads to delays, inconsistent data, and limited visibility."
     )
+
+    add_sub_heading(doc, "Traditional Operations")
+    for label, body in [
+        ("Phone calls and emails:", "Status updates depend on people being available."),
+        ("Spreadsheets:", "Data is fragmented and quickly out of date."),
+        ("Manual coordination:", "Assignment and follow-up take time and increase errors."),
+    ]:
+        add_bullet(doc, label, body)
+
+    add_sub_heading(doc, "With the Proposed Platform")
+    for label, body in [
+        ("Centralized operations:", "All shipments, carriers, and updates in one place."),
+        ("Real-time visibility:", "Live tracking and alerts reduce surprises."),
+        ("Better decision making:", "Reliable data supports faster, smarter choices."),
+        ("Improved efficiency:", "Less manual work and clearer accountability."),
+    ]:
+        add_bullet(doc, label, body)
+
     add_body(
         doc,
-        "We welcome the opportunity to tailor the platform to your operational model and launch a "
-        "pilot that proves value quickly before scaling to full production."
+        "The result is a more predictable logistics operation with lower costs and stronger service "
+        "quality for customers."
+    )
+
+    # ════════════════════════════════════════════════════════════════════════
+    # SECTION 11 – Development Approach
+    # ════════════════════════════════════════════════════════════════════════
+    add_section_heading(doc, "11.", "Development Approach")
+    add_body(
+        doc,
+        "We recommend a phased implementation so the business sees value early while reducing delivery "
+        "risk. Each phase builds on the previous one without disrupting day-to-day operations."
+    )
+
+    add_sub_heading(doc, "Phase 1 – Core Logistics Platform")
+    for item in [
+        "User management",
+        "Security",
+        "Shipment creation",
+        "Shipment posting",
+        "Carrier matching",
+        "Shipment assignment",
+        "Driver management",
+        "Shipment status tracking",
+        "Ratings and reviews",
+    ]:
+        add_bullet(doc, item, "")
+
+    add_sub_heading(doc, "Phase 2 – Live Tracking")
+    for item in [
+        "GPS integration",
+        "Smartphone-based tracking",
+        "Real-time location monitoring",
+        "Tracking dashboards",
+    ]:
+        add_bullet(doc, item, "")
+
+    add_sub_heading(doc, "Phase 3 – Route Optimization")
+    for item in [
+        "Route planning",
+        "ETA prediction",
+        "Route monitoring",
+    ]:
+        add_bullet(doc, item, "")
+
+    add_sub_heading(doc, "Phase 4 – Future Enhancements")
+    for item in [
+        "Payment integration",
+        "Proof of delivery",
+        "Advanced analytics",
+        "Fleet management integration",
+        "Warehouse integration",
+        "AI-assisted forecasting",
+    ]:
+        add_bullet(doc, item, "")
+
+    add_sub_heading(doc, "Development Philosophy")
+    add_body(
+        doc,
+        "The platform is designed to solve immediate operational challenges while creating a scalable "
+        "foundation for future growth. Each phase adds value without requiring a full redesign, so the "
+        "business can evolve its capabilities over time with confidence."
     )
 
     doc.add_paragraph()
