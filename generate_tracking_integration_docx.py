@@ -171,7 +171,10 @@ def build_document() -> Document:
 
     header = doc.sections[0].header
     header_para = header.paragraphs[0]
-    header_para.text = "Fleet Management System  |  Tracking Integration Roadmap"
+    header_para.text = (
+        "Fleet Management System  |  Tracking Integration & Logistics Platform "
+        "Enhancement Plan"
+    )
     header_para.alignment = WD_ALIGN_PARAGRAPH.RIGHT
     header_run = header_para.runs[0]
     header_run.font.size = Pt(9)
@@ -191,7 +194,9 @@ def build_document() -> Document:
 
     title_p = doc.add_paragraph()
     title_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    title_run = title_p.add_run("Tracking Integration & Logistics Platform Roadmap")
+    title_run = title_p.add_run(
+        "Tracking System Integration & Logistics Platform Enhancement Plan"
+    )
     title_run.bold = True
     title_run.font.size = Pt(24)
     title_run.font.color.rgb = NAVY
@@ -213,7 +218,7 @@ def build_document() -> Document:
 
     meta_data = [
         ("Project Name", "Fleet Management System"),
-        ("Document Type", "Tracking Integration Roadmap"),
+        ("Document Type", "Tracking Integration & Logistics Platform Enhancement Plan"),
         ("Version", "1.0"),
         ("Date", datetime.date.today().strftime("%B %d, %Y")),
     ]
@@ -244,256 +249,285 @@ def build_document() -> Document:
 
     doc.add_paragraph()
 
-    add_section_heading(doc, "1.", "Executive Overview")
+    add_section_heading(doc, "1.", "Executive Summary")
     add_body(
         doc,
-        "With the Production MVP complete, the next stage focuses on delivering a "
-        "tracking-first logistics platform. The roadmap below connects vehicles, "
-        "shipments, and telemetry into a single operational view while progressively "
-        "unlocking automation, auditing, and performance intelligence.",
+        "Following the completion of the Production MVP, the next development phase "
+        "focuses on integrating a comprehensive shipment tracking capability into the "
+        "logistics platform. This enhancement will provide real-time visibility into "
+        "shipment movement, improve operational oversight, strengthen customer "
+        "confidence, and establish the foundation for future logistics intelligence "
+        "features.",
     )
-    add_sub_heading(doc, "Primary Outcomes")
-    add_bullet(
+    add_body(
         doc,
-        "Real-time visibility:",
-        "Give stakeholders an always-current view of shipment movement and status.",
-    )
-    add_bullet(
-        doc,
-        "Operational confidence:",
-        "Reduce manual status checks and improve exception response times.",
-    )
-    add_bullet(
-        doc,
-        "Scalable foundation:",
-        "Standardize tracking data to support automation and analytics later phases.",
+        "The tracking integration will be implemented in phases to ensure stability, "
+        "scalability, and measurable business value.",
     )
 
-    add_section_heading(doc, "2.", "Roadmap at a Glance")
+    add_section_heading(doc, "2.", "Phase 1: Tracking Infrastructure Integration")
+    add_sub_heading(doc, "Objective")
     add_body(
         doc,
-        "Delivery is staged to prioritize the tracking foundation and live visibility "
-        "before expanding into automation, alerts, and analytics.",
+        "Establish the technical foundation required to connect vehicles, shipments, and "
+        "location data.",
     )
+    add_sub_heading(doc, "Scope")
+    add_sub_heading(doc, "Vehicle Management")
+    add_bullet(doc, "Register vehicles within the platform", "")
+    add_bullet(doc, "Associate vehicles with carriers", "")
+    add_bullet(doc, "Maintain vehicle profiles and identification information", "")
+    add_sub_heading(doc, "Shipment-Vehicle Assignment")
+    add_bullet(doc, "Link assigned shipments to vehicles", "")
+    add_bullet(doc, "Track active shipment-vehicle relationships", "")
+    add_bullet(doc, "Maintain assignment history", "")
+    add_sub_heading(doc, "Tracking Data Integration")
+    add_bullet(doc, "Receive and process location updates", "")
+    add_bullet(doc, "Store current vehicle position information", "")
+    add_bullet(doc, "Manage vehicle status information", "")
+    add_sub_heading(doc, "Tracking Administration")
+    add_bullet(doc, "Vehicle registration management", "")
+    add_bullet(doc, "Device assignment management", "")
+    add_bullet(doc, "Tracking configuration controls", "")
+    add_sub_heading(doc, "Deliverables")
+    add_bullet(doc, "Vehicle Management Module", "")
+    add_bullet(doc, "Shipment-to-Vehicle Assignment Capability", "")
+    add_bullet(doc, "Tracking Integration Layer", "")
+    add_bullet(doc, "Tracking Administration Interface", "")
+    add_sub_heading(doc, "Business Benefits")
+    add_bullet(doc, "Foundation for all future tracking capabilities", "")
+    add_bullet(doc, "Improved operational visibility", "")
+    add_bullet(doc, "Accurate shipment monitoring", "")
+
+    add_section_heading(doc, "3.", "Phase 2: Real-Time Shipment Tracking")
+    add_sub_heading(doc, "Objective")
+    add_body(
+        doc,
+        "Provide live shipment visibility to shippers, carriers, and administrators.",
+    )
+    add_sub_heading(doc, "Scope")
+    add_sub_heading(doc, "Live Vehicle Location")
+    add_bullet(doc, "Current vehicle location display", "")
+    add_bullet(doc, "Vehicle movement monitoring", "")
+    add_bullet(doc, "Last update timestamp visibility", "")
+    add_sub_heading(doc, "Shipment Tracking Dashboard")
+    add_bullet(doc, "Real-time shipment map", "")
+    add_bullet(doc, "Active shipment monitoring", "")
+    add_bullet(doc, "Shipment progress visualization", "")
+    add_sub_heading(doc, "Shipment Tracking Page")
+    add_body(doc, "Display:")
+    add_bullet(doc, "Shipment information", "")
+    add_bullet(doc, "Assigned carrier", "")
+    add_bullet(doc, "Assigned vehicle", "")
+    add_bullet(doc, "Current location", "")
+    add_bullet(doc, "Current shipment status", "")
+    add_bullet(doc, "Last reported activity", "")
+    add_sub_heading(doc, "Tracking History")
+    add_bullet(doc, "Historical location records", "")
+    add_bullet(doc, "Movement timeline", "")
+    add_bullet(doc, "Position history retrieval", "")
+    add_sub_heading(doc, "Deliverables")
+    add_bullet(doc, "Live Tracking Dashboard", "")
+    add_bullet(doc, "Shipment Tracking Interface", "")
+    add_bullet(doc, "Historical Tracking Records", "")
+    add_sub_heading(doc, "Business Benefits")
+    add_bullet(doc, "Increased customer confidence", "")
+    add_bullet(doc, "Reduced status inquiry calls", "")
+    add_bullet(doc, "Improved shipment visibility", "")
+    add_bullet(doc, "Enhanced operational control", "")
+
+    add_section_heading(doc, "4.", "Phase 3: Route History & Playback")
+    add_sub_heading(doc, "Objective")
+    add_body(
+        doc,
+        "Allow users and administrators to review completed and active shipment "
+        "journeys.",
+    )
+    add_sub_heading(doc, "Scope")
+    add_sub_heading(doc, "Route Playback")
+    add_bullet(doc, "Historical route visualization", "")
+    add_bullet(doc, "Journey replay functionality", "")
+    add_bullet(doc, "Time-based movement review", "")
+    add_sub_heading(doc, "Trip Analysis")
+    add_bullet(doc, "Route traveled", "")
+    add_bullet(doc, "Distance covered", "")
+    add_bullet(doc, "Stop duration analysis", "")
+    add_bullet(doc, "Travel activity history", "")
+    add_sub_heading(doc, "Operational Investigation")
+    add_bullet(doc, "Shipment verification", "")
+    add_bullet(doc, "Route compliance monitoring", "")
+    add_bullet(doc, "Delivery confirmation support", "")
+    add_sub_heading(doc, "Deliverables")
+    add_bullet(doc, "Route Playback Interface", "")
+    add_bullet(doc, "Journey History Reports", "")
+    add_bullet(doc, "Route Analysis Tools", "")
+    add_sub_heading(doc, "Business Benefits")
+    add_bullet(doc, "Shipment audit capability", "")
+    add_bullet(doc, "Improved dispute resolution", "")
+    add_bullet(doc, "Operational performance insights", "")
+    add_bullet(doc, "Historical shipment verification", "")
+
+    add_section_heading(doc, "5.", "Phase 4: Geofence-Based Logistics Automation")
+    add_sub_heading(doc, "Objective")
+    add_body(
+        doc,
+        "Automate shipment monitoring using location-based events.",
+    )
+    add_sub_heading(doc, "Scope")
+    add_sub_heading(doc, "Pickup Geofences")
+    add_bullet(doc, "Pickup area definition", "")
+    add_bullet(doc, "Arrival detection", "")
+    add_bullet(doc, "Departure detection", "")
+    add_sub_heading(doc, "Destination Geofences")
+    add_bullet(doc, "Delivery area definition", "")
+    add_bullet(doc, "Destination arrival detection", "")
+    add_bullet(doc, "Delivery verification support", "")
+    add_sub_heading(doc, "Event Monitoring")
+    add_bullet(doc, "Entry events", "")
+    add_bullet(doc, "Exit events", "")
+    add_bullet(doc, "Arrival notifications", "")
+    add_sub_heading(doc, "Shipment Event Recording")
+    add_bullet(doc, "Geofence event history", "")
+    add_bullet(doc, "Automated operational logs", "")
+    add_bullet(doc, "Location-based audit trail", "")
+    add_sub_heading(doc, "Deliverables")
+    add_bullet(doc, "Geofence Management System", "")
+    add_bullet(doc, "Geofence Event Processing", "")
+    add_bullet(doc, "Automated Shipment Event Recording", "")
+    add_sub_heading(doc, "Business Benefits")
+    add_bullet(doc, "Reduced manual monitoring", "")
+    add_bullet(doc, "Increased operational accuracy", "")
+    add_bullet(doc, "Improved delivery verification", "")
+    add_bullet(doc, "Better shipment accountability", "")
+
+    add_section_heading(doc, "6.", "Phase 5: Intelligent Shipment Status Automation")
+    add_sub_heading(doc, "Objective")
+    add_body(
+        doc,
+        "Reduce manual shipment updates and improve status accuracy.",
+    )
+    add_sub_heading(doc, "Scope")
+    add_sub_heading(doc, "Automated Status Progression")
+    add_body(doc, "Examples:")
+    add_bullet(doc, "Pickup location reached → Shipment Ready for Pickup", "")
+    add_bullet(doc, "Pickup completed → In Transit", "")
+    add_bullet(doc, "Destination reached → Delivered", "")
+    add_sub_heading(doc, "Event-Driven Workflow Management")
+    add_bullet(doc, "Automatic shipment progression", "")
+    add_bullet(doc, "Reduced user intervention", "")
+    add_bullet(doc, "Location-based workflow triggers", "")
+    add_sub_heading(doc, "Exception Handling")
+    add_bullet(doc, "Missed route alerts", "")
+    add_bullet(doc, "Delayed movement detection", "")
+    add_bullet(doc, "Unexpected stop detection", "")
+    add_sub_heading(doc, "Deliverables")
+    add_bullet(doc, "Automated Status Engine", "")
+    add_bullet(doc, "Event Processing Framework", "")
+    add_bullet(doc, "Shipment Automation Rules", "")
+    add_sub_heading(doc, "Business Benefits")
+    add_bullet(doc, "Reduced operational workload", "")
+    add_bullet(doc, "Improved shipment data accuracy", "")
+    add_bullet(doc, "Faster status updates", "")
+    add_bullet(doc, "Improved customer experience", "")
+
+    add_section_heading(doc, "7.", "Phase 6: Notifications & Tracking Alerts")
+    add_sub_heading(doc, "Objective")
+    add_body(
+        doc,
+        "Keep all stakeholders informed about shipment progress.",
+    )
+    add_sub_heading(doc, "Scope")
+    add_sub_heading(doc, "Shipment Notifications")
+    add_bullet(doc, "Carrier assigned", "")
+    add_bullet(doc, "Pickup completed", "")
+    add_bullet(doc, "Shipment in transit", "")
+    add_bullet(doc, "Shipment delivered", "")
+    add_sub_heading(doc, "Location-Based Alerts")
+    add_bullet(doc, "Vehicle arrived at pickup location", "")
+    add_bullet(doc, "Vehicle departed pickup location", "")
+    add_bullet(doc, "Vehicle arrived at destination", "")
+    add_sub_heading(doc, "Administrative Alerts")
+    add_bullet(doc, "Tracking interruption detection", "")
+    add_bullet(doc, "Delayed shipment notifications", "")
+    add_bullet(doc, "Route deviation notifications", "")
+    add_sub_heading(doc, "Deliverables")
+    add_bullet(doc, "Notification Service", "")
+    add_bullet(doc, "Alert Management System", "")
+    add_bullet(doc, "User Notification Center", "")
+    add_sub_heading(doc, "Business Benefits")
+    add_bullet(doc, "Faster communication", "")
+    add_bullet(doc, "Improved shipment awareness", "")
+    add_bullet(doc, "Reduced operational delays", "")
+
+    add_section_heading(doc, "8.", "Phase 7: Carrier Performance & Analytics")
+    add_sub_heading(doc, "Objective")
+    add_body(
+        doc,
+        "Leverage tracking data to measure operational performance.",
+    )
+    add_sub_heading(doc, "Scope")
+    add_sub_heading(doc, "Carrier Performance Metrics")
+    add_bullet(doc, "Delivery completion rates", "")
+    add_bullet(doc, "Average delivery times", "")
+    add_bullet(doc, "On-time delivery performance", "")
+    add_sub_heading(doc, "Vehicle Utilization Metrics")
+    add_bullet(doc, "Active operating hours", "")
+    add_bullet(doc, "Distance traveled", "")
+    add_bullet(doc, "Asset utilization reports", "")
+    add_sub_heading(doc, "Operational Dashboards")
+    add_bullet(doc, "Fleet activity overview", "")
+    add_bullet(doc, "Shipment activity overview", "")
+    add_bullet(doc, "Delivery performance reporting", "")
+    add_sub_heading(doc, "Carrier Rating & Review Integration")
+    add_bullet(doc, "Post-delivery ratings", "")
+    add_bullet(doc, "Customer feedback", "")
+    add_bullet(doc, "Reputation scoring", "")
+    add_sub_heading(doc, "Deliverables")
+    add_bullet(doc, "Performance Dashboard", "")
+    add_bullet(doc, "Carrier Analytics", "")
+    add_bullet(doc, "Rating & Review System", "")
+    add_bullet(doc, "Operational Reporting", "")
+    add_sub_heading(doc, "Business Benefits")
+    add_bullet(doc, "Data-driven decision making", "")
+    add_bullet(doc, "Improved carrier accountability", "")
+    add_bullet(doc, "Better service quality monitoring", "")
+    add_bullet(doc, "Enhanced marketplace trust", "")
+
+    add_section_heading(doc, "9.", "Recommended Implementation Timeline")
     add_styled_table(
         doc,
-        headers=["Phase", "Primary Deliverable", "Priority"],
+        headers=["Phase", "Deliverable", "Priority"],
         rows=[
-            ("1", "Tracking foundation & integration", "Critical"),
-            ("2", "Live shipment visibility", "Critical"),
-            ("3", "Route history & playback", "High"),
-            ("4", "Geofence automation", "High"),
-            ("5", "Status automation engine", "High"),
-            ("6", "Notifications & alerting", "Medium"),
-            ("7", "Analytics & carrier performance", "Medium"),
+            ("1", "Tracking Infrastructure Integration", "Critical"),
+            ("2", "Real-Time Shipment Tracking", "Critical"),
+            ("3", "Route Playback", "High"),
+            ("4", "Geofence Automation", "High"),
+            ("5", "Shipment Status Automation", "High"),
+            ("6", "Notifications & Alerts", "Medium"),
+            ("7", "Analytics, Ratings & Performance", "Medium"),
         ],
     )
-
-    add_section_heading(doc, "3.", "Phase 1 — Tracking Foundation")
-    add_body(
-        doc,
-        "Establish the technical backbone for tracking by registering vehicles, "
-        "linking shipments, and ingesting location updates reliably.",
-    )
-    add_sub_heading(doc, "Core Capabilities")
-    add_bullet(
-        doc,
-        "Vehicle registry:",
-        "Maintain vehicle profiles, identifiers, and carrier ownership details.",
-    )
-    add_bullet(
-        doc,
-        "Shipment assignment:",
-        "Bind shipments to vehicles with active and historical relationships.",
-    )
-    add_bullet(
-        doc,
-        "Telemetry ingestion:",
-        "Receive position updates, status signals, and last-seen timestamps.",
-    )
-    add_bullet(
-        doc,
-        "Administration:",
-        "Manage registrations, devices, and tracking configuration settings.",
-    )
-    add_sub_heading(doc, "Deliverables")
-    add_bullet(doc, "Vehicle management module:", "Vehicle profiles and carrier links.")
-    add_bullet(doc, "Shipment-to-vehicle assignment:", "Assignment workflow and history.")
-    add_bullet(doc, "Tracking integration layer:", "Location processing and storage.")
-    add_bullet(doc, "Tracking admin console:", "Configuration and device management.")
-    add_sub_heading(doc, "Business Value")
-    add_bullet(doc, "Foundational readiness:", "Enables all downstream tracking features.")
-    add_bullet(doc, "Better oversight:", "Improves visibility into active operations.")
-
-    add_section_heading(doc, "4.", "Phase 2 — Live Shipment Tracking")
-    add_body(
-        doc,
-        "Expose real-time tracking views for shippers, carriers, and administrators "
-        "with map-based monitoring and up-to-date status indicators.",
-    )
-    add_sub_heading(doc, "Core Capabilities")
-    add_bullet(doc, "Live location:", "Show current vehicle position with last update time.")
-    add_bullet(doc, "Tracking dashboard:", "Monitor active shipments on a real-time map.")
-    add_bullet(
-        doc,
-        "Shipment tracking page:",
-        "Display shipment, carrier, vehicle, location, status, and activity details.",
-    )
-    add_bullet(
-        doc,
-        "History capture:",
-        "Store position history for later review and investigation.",
-    )
-    add_sub_heading(doc, "Deliverables")
-    add_bullet(doc, "Live tracking dashboard:", "Operational map with active shipments.")
-    add_bullet(doc, "Shipment tracking interface:", "Dedicated shipment visibility page.")
-    add_bullet(doc, "Historical tracking records:", "Queryable movement history.")
-    add_sub_heading(doc, "Business Value")
-    add_bullet(doc, "Customer confidence:", "Fewer status calls and higher transparency.")
-    add_bullet(doc, "Operational control:", "Immediate awareness of shipment progress.")
-
-    add_section_heading(doc, "5.", "Phase 3 — Route History & Playback")
-    add_body(
-        doc,
-        "Enable route playback and journey analysis for completed and in-progress "
-        "shipments to support audits and operational review.",
-    )
-    add_sub_heading(doc, "Core Capabilities")
-    add_bullet(doc, "Route playback:", "Replay historical movement on a timeline.")
-    add_bullet(
-        doc,
-        "Trip analytics:",
-        "Summarize distance traveled, stops, and travel behavior.",
-    )
-    add_bullet(
-        doc,
-        "Investigation tools:",
-        "Validate deliveries and verify compliance with expected routes.",
-    )
-    add_sub_heading(doc, "Deliverables")
-    add_bullet(doc, "Playback interface:", "Time-based route visualization.")
-    add_bullet(doc, "Journey reports:", "Exportable movement summaries.")
-    add_bullet(doc, "Route analysis tools:", "Stop duration and distance insights.")
-    add_sub_heading(doc, "Business Value")
-    add_bullet(doc, "Audit readiness:", "Improves dispute resolution and verification.")
-    add_bullet(doc, "Performance insights:", "Highlights operational efficiency gaps.")
-
-    add_section_heading(doc, "6.", "Phase 4 — Geofence Automation")
-    add_body(
-        doc,
-        "Introduce location-based triggers for pickup and delivery sites to automate "
-        "arrival/departure events and build a reliable audit trail.",
-    )
-    add_sub_heading(doc, "Core Capabilities")
-    add_bullet(doc, "Pickup geofences:", "Detect arrival and departure at origin sites.")
-    add_bullet(doc, "Destination geofences:", "Confirm delivery zone entry and exit.")
-    add_bullet(doc, "Event monitoring:", "Track entry, exit, and arrival milestones.")
-    add_bullet(doc, "Event logging:", "Persist geofence activity for audits.")
-    add_sub_heading(doc, "Deliverables")
-    add_bullet(doc, "Geofence management:", "Create and manage location boundaries.")
-    add_bullet(doc, "Event processing:", "Real-time geofence trigger handling.")
-    add_bullet(doc, "Automated event history:", "Structured geofence audit trail.")
-    add_sub_heading(doc, "Business Value")
-    add_bullet(doc, "Reduced manual checks:", "Automates pickup/delivery confirmation.")
-    add_bullet(doc, "Higher accuracy:", "Improves delivery verification quality.")
-
-    add_section_heading(doc, "7.", "Phase 5 — Intelligent Status Automation")
-    add_body(
-        doc,
-        "Automate shipment status progression using tracking events and exceptions "
-        "to minimize manual updates and improve data accuracy.",
-    )
-    add_sub_heading(doc, "Core Capabilities")
-    add_bullet(
-        doc,
-        "Event-driven progression:",
-        "Advance statuses based on arrivals, departures, and delivery completion.",
-    )
-    add_bullet(
-        doc,
-        "Workflow automation:",
-        "Reduce user intervention with rules-based status updates.",
-    )
-    add_bullet(
-        doc,
-        "Exception detection:",
-        "Identify delays, route deviations, and unexpected stops.",
-    )
-    add_sub_heading(doc, "Deliverables")
-    add_bullet(doc, "Status automation engine:", "Rules-based shipment progression.")
-    add_bullet(doc, "Event processing framework:", "Unified event handling pipeline.")
-    add_bullet(doc, "Automation rule library:", "Configurable status triggers.")
-    add_sub_heading(doc, "Business Value")
-    add_bullet(doc, "Operational efficiency:", "Less manual effort and faster updates.")
-    add_bullet(doc, "Data accuracy:", "Consistent status and milestone reporting.")
-
-    add_section_heading(doc, "8.", "Phase 6 — Notifications & Alerts")
-    add_body(
-        doc,
-        "Keep stakeholders informed with proactive shipment notifications and "
-        "location-based alerts for critical tracking events.",
-    )
-    add_sub_heading(doc, "Core Capabilities")
-    add_bullet(doc, "Shipment notifications:", "Assignment, pickup, transit, delivery updates.")
-    add_bullet(
-        doc,
-        "Location alerts:",
-        "Arrival and departure notifications for pickup/destination geofences.",
-    )
-    add_bullet(
-        doc,
-        "Administrative alerts:",
-        "Detect tracking interruptions and delay conditions.",
-    )
-    add_sub_heading(doc, "Deliverables")
-    add_bullet(doc, "Notification service:", "Multi-channel update engine.")
-    add_bullet(doc, "Alert management:", "Configurable alert rules and routing.")
-    add_bullet(doc, "User notification center:", "Centralized notification history.")
-    add_sub_heading(doc, "Business Value")
-    add_bullet(doc, "Faster communication:", "Improves stakeholder awareness.")
-    add_bullet(doc, "Reduced delays:", "Early warning for operational issues.")
-
-    add_section_heading(doc, "9.", "Phase 7 — Analytics & Carrier Performance")
-    add_body(
-        doc,
-        "Use tracking data to measure carrier performance, vehicle utilization, "
-        "and service reliability through dashboards and ratings.",
-    )
-    add_sub_heading(doc, "Core Capabilities")
-    add_bullet(
-        doc,
-        "Performance metrics:",
-        "On-time delivery, completion rates, and average transit times.",
-    )
-    add_bullet(
-        doc,
-        "Utilization insights:",
-        "Vehicle operating hours, distance traveled, and asset usage.",
-    )
-    add_bullet(
-        doc,
-        "Operational dashboards:",
-        "Fleet and shipment activity reporting for leadership.",
-    )
-    add_bullet(
-        doc,
-        "Ratings & reviews:",
-        "Capture post-delivery feedback and carrier scores.",
-    )
-    add_sub_heading(doc, "Deliverables")
-    add_bullet(doc, "Performance dashboards:", "Carrier and fleet analytics.")
-    add_bullet(doc, "Rating system:", "Post-delivery feedback integration.")
-    add_bullet(doc, "Operational reports:", "Exportable performance insights.")
-    add_sub_heading(doc, "Business Value")
-    add_bullet(doc, "Data-driven decisions:", "Enables accountability and optimization.")
-    add_bullet(doc, "Service quality visibility:", "Improves trust and marketplace health.")
 
     add_section_heading(doc, "10.", "Strategic Outcome")
     add_body(
         doc,
-        "This phased approach transforms the platform from shipment management into a "
-        "fully trackable logistics ecosystem, enabling real-time visibility, verified "
-        "delivery events, automated workflows, and actionable performance insights.",
+        "Upon completion of this roadmap, the platform will evolve from a shipment "
+        "management system into a fully trackable logistics ecosystem capable of "
+        "providing:",
+    )
+    add_bullet(doc, "Real-time shipment visibility", "")
+    add_bullet(doc, "Route history and playback", "")
+    add_bullet(doc, "Automated location-based workflows", "")
+    add_bullet(doc, "Delivery verification", "")
+    add_bullet(doc, "Intelligent notifications", "")
+    add_bullet(doc, "Carrier accountability", "")
+    add_bullet(doc, "Operational analytics", "")
+    add_bullet(doc, "Enhanced customer confidence", "")
+    add_body(
+        doc,
+        "This approach prioritizes shipment tracking and operational visibility while "
+        "creating a scalable foundation for future marketplace and logistics "
+        "intelligence capabilities.",
     )
 
     return doc
